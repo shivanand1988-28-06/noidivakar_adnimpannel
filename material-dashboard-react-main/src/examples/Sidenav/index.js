@@ -97,7 +97,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           sx={{ textDecoration: "none" }}
         >
           <SidenavCollapse
-            name="Divakar && Divakar associates (Admin Pannel)"
+            name={name}
             icon={icon}
             active={key === collapseName}
             noCollapse={noCollapse}
