@@ -35,7 +35,7 @@ function CoverLayout({ coverHeight, image, children }) {
     <PageLayout>
       <DefaultNavbar
         action={{
-          type: "external",
+          type: "internal",
           route: "https://admindivakar.netlify.app/authentication/sign-up",
           label: "sign up",
         }}
