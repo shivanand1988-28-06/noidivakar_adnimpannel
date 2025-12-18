@@ -36,8 +36,8 @@ function CoverLayout({ coverHeight, image, children }) {
       <DefaultNavbar
         action={{
           type: "external",
-          route: "",
-          label: "back",
+          route: "https://admindivakar.netlify.app/authentication/sign-up",
+          label: "sign up",
         }}
         transparent
         light

@@ -32,14 +32,14 @@ import Footer from "layouts/authentication/components/Footer";
 function BasicLayout({ image, children }) {
   return (
     <PageLayout>
-      {/* <DefaultNavbar
+      <DefaultNavbar
         action={{
           type: "external",
-          route: "",
-          label: "",
+          route: "https://admindivakar.netlify.app/authentication/sign-up",
+          label: "sign up",
           color: "dark",
         }}
-      /> */}
+      />
       <MDBox
         position="absolute"
         width="100%"
