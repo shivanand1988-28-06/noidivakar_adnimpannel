@@ -66,7 +66,17 @@ function Cover() {
   return (
     <CoverLayout image={bgImage}>
       <Card>
-        <MDBox variant="gradient" bgColor="info" borderRadius="lg" coloredShadow="success" mx={2} mt={-3} p={3} mb={1} textAlign="center">
+        <MDBox
+          variant="gradient"
+          bgColor="info"
+          borderRadius="lg"
+          coloredShadow="success"
+          mx={2}
+          mt={-3}
+          p={3}
+          mb={1}
+          textAlign="center"
+        >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
             Join us today
           </MDTypography>
