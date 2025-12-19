@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 // React
 import React, { useState } from "react";
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -61,6 +61,7 @@ function Cover() {
     }
   };
   return (
+    <Form onSubmit={handleSubmit}>
     <CoverLayout image={bgImage}>
       <Card>
         <MDBox
@@ -138,7 +139,7 @@ function Cover() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton type="submit" variant="gradient" color="info" fullWidth>
                 Sign Up
               </MDButton>
             </MDBox>
@@ -161,6 +162,7 @@ function Cover() {
         </MDBox>
       </Card>
     </CoverLayout>
+    </Form>
   );
 }
 
