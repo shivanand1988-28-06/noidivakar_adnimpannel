@@ -53,9 +53,11 @@ function Cover() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(form)
       })
-    }catch (error) {}
+    }catch (error) {
+      console.log("Error during sign up:", error);
+    }
  }
   return (
     <CoverLayout image={bgImage}>
@@ -126,7 +128,7 @@ function Cover() {
                   fontWeight="medium"
                   textGradient
                 >
-                  Sign In
+                  Sign Up
                 </MDTypography>
               </MDTypography>
             </MDBox>
