@@ -16,8 +16,7 @@ Coded by www.creative-tim.com
 // React
 import React, { useState } from "react";
 // react-router-dom components
-import { Form, Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 // @mui material components
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
@@ -37,6 +36,7 @@ import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 const API_BASE = "https://web-production-04c51.up.railway.app";
 
 function Cover() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -62,6 +62,12 @@ function Cover() {
     } catch (error) {
       console.log("Error during sign up:", error);
     }
+    setForm({
+      name: "",
+      email: "",
+      password: "",
+    });
+    navigate("/authentication/sign-in");
   };
   return (
     <CoverLayout image={bgImage}>
