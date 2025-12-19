@@ -34,7 +34,7 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 // Images
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 
-const API_BASE = "https://web-production-04c51.up.railway.app/";
+const API_BASE = "https://web-production-04c51.up.railway.app";
 
 function Cover() {
   const [form, setForm] = useState({
