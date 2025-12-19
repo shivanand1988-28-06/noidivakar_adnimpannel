@@ -34,7 +34,7 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 // Images
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 
-const API_BASE = "https://web-production-04c51.up.railway.app/api";
+const API_BASE = "https://web-production-04c51.up.railway.app/";
 
 function Cover() {
   const [form, setForm] = useState({
@@ -48,6 +48,7 @@ function Cover() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form submitted:", form);
     try {
       const response = await fetch(`${API_BASE}/api/admin-signup`, {
         method: "POST",
@@ -56,25 +57,16 @@ function Cover() {
         },
         body: JSON.stringify(form),
       });
+      const result = await response.json();
+      console.log("Sign up successful:", result);
     } catch (error) {
       console.log("Error during sign up:", error);
     }
   };
   return (
-    <Form onSubmit={handleSubmit}>
     <CoverLayout image={bgImage}>
       <Card>
-        <MDBox
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="success"
-          mx={2}
-          mt={-3}
-          p={3}
-          mb={1}
-          textAlign="center"
-        >
+        <MDBox variant="gradient" bgColor="info" borderRadius="lg" coloredShadow="success" mx={2} mt={-3} p={3} mb={1} textAlign="center">
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
             Join us today
           </MDTypography>
@@ -162,7 +154,6 @@ function Cover() {
         </MDBox>
       </Card>
     </CoverLayout>
-    </Form>
   );
 }
 
