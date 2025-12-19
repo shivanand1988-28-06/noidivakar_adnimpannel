@@ -32,33 +32,32 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 // Images
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 
-const API_BASE = 'https://web-production-04c51.up.railway.app/api';
-
+const API_BASE = "https://web-production-04c51.up.railway.app/api";
 
 function Cover() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-   const handleSubmit = async(e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${API_BASE}/api/admin-signup`, {
-          method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(form)
-      })
-    }catch (error) {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+    } catch (error) {
       console.log("Error during sign up:", error);
     }
- }
+  };
   return (
     <CoverLayout image={bgImage}>
       <Card>
@@ -83,13 +82,37 @@ function Cover() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth onChange={handleChange} name="name" value={form.name} />
+              <MDInput
+                type="text"
+                label="Name"
+                variant="standard"
+                fullWidth
+                onChange={handleChange}
+                name="name"
+                value={form.name}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" variant="standard" fullWidth onChange={handleChange} name="email" value={form.email} />
+              <MDInput
+                type="email"
+                label="Email"
+                variant="standard"
+                fullWidth
+                onChange={handleChange}
+                name="email"
+                value={form.email}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password"  label="Password" variant="standard" fullWidth onChange={handleChange} name="password" value={form.password} />
+              <MDInput
+                type="password"
+                label="Password"
+                variant="standard"
+                fullWidth
+                onChange={handleChange}
+                name="password"
+                value={form.password}
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Checkbox />
