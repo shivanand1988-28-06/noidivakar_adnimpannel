@@ -64,7 +64,7 @@ function Basic() {
     setError("");
     console.log("Submitting form with data:", form);
     try {
-      const response = await fetch(`${API_BASE}/api/admin-sigin`, {
+      const response = await fetch(`${API_BASE}/api/admin-signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
