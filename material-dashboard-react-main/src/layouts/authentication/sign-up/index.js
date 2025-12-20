@@ -26,6 +26,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
+import MDSnackbar from "components/MDSnackbar";
 
 // Authentication layout components
 import CoverLayout from "layouts/authentication/components/CoverLayout";
@@ -43,10 +44,12 @@ function Cover() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError(""); // Clear error on input change
+    setShowError(false);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,6 +65,7 @@ function Cover() {
       if (!response.ok) {
         const result = await response.json();
         setError(result.message || "Sign up failed. Please check your credentials.");
+        setShowError(true);
         return;
       }
       const result = await response.json();
@@ -74,6 +78,7 @@ function Cover() {
       navigate("/authentication/sign-in");
     } catch (error) {
       setError("Network error. Please try again later.");
+      setShowError(true);
       console.log("Error during sign up:", error);
     }
   };
@@ -99,13 +104,15 @@ function Cover() {
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          {error && (
-            <MDBox mb={2}>
-              <MDTypography color="error" variant="button">
-                {error}
-              </MDTypography>
-            </MDBox>
-          )}
+          <MDSnackbar
+            color="error"
+            icon="error"
+            title="Sign Up Error"
+            dateTime={"now"}
+            content={error}
+            open={showError}
+            close={() => setShowError(false)}
+          />
           <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
               <MDInput
