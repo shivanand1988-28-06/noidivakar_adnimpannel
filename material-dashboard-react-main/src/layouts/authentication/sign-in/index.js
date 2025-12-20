@@ -23,7 +23,6 @@ import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 
-
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -47,9 +46,8 @@ function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
-    
     email: "",
     password: "",
   });
@@ -81,7 +79,6 @@ const navigate = useNavigate();
       const result = await response.json();
       console.log("Signin successful:", result);
       setForm({
-      
         email: "",
         password: "",
       });
@@ -128,24 +125,18 @@ const navigate = useNavigate();
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" 
-          role="form" 
-          onSubmit={handleSubmit}>
+          <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput 
-              type="email" 
-              label="Email" 
-              name="email"
-              onChange={handleChange}
-              fullWidth />
+              <MDInput type="email" label="Email" name="email" onChange={handleChange} fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput 
-              type="password" 
-              label="Password" 
-              name="password"
-              onChange={handleChange}
-              fullWidth />
+              <MDInput
+                type="password"
+                label="Password"
+                name="password"
+                onChange={handleChange}
+                fullWidth
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
