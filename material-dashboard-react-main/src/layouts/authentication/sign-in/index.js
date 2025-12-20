@@ -79,6 +79,10 @@ function Basic() {
       }
       const result = await response.json();
       console.log("Signin successful:", result);
+      // Store JWT token if present
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+      }
       setForm({
         email: "",
         password: "",
