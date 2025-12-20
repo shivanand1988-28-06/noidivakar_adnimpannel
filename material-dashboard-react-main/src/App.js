@@ -102,7 +102,8 @@ export default function App() {
   useEffect(() => {
     document.body.setAttribute("dir", direction);
     const adminUser = localStorage.getItem("user");
-    console.log("Admin User Info:", adminUser);
+    const parsedUser = adminUser ? JSON.parse(adminUser) : null;
+    console.log("Admin User Info:", parsedUser?.name);
     if (!adminUser) {
       <Navigate to="/authentication/sign-in" />;
     }
