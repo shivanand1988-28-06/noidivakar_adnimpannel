@@ -34,18 +34,63 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-
+import { Link, useNavigate } from "react-router-dom";
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+const API_BASE = "https://web-production-04c51.up.railway.app";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+const navigate = useNavigate();
+  const [form, setForm] = useState({
+    
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
 
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setError(""); // Clear error on input change
+    setShowError(false);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const response = await fetch(`${API_BASE}/api/admin-sigin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      if (!response.ok) {
+        const result = await response.json();
+        setError(result.message || "Signin failed. Please check your credentials.");
+        setShowError(true);
+        return;
+      }
+      const result = await response.json();
+      console.log("Signin successful:", result);
+      setForm({
+      
+        email: "",
+        password: "",
+      });
+      navigate("/authentication/sign-in");
+    } catch (error) {
+      setError("Network error. Please try again later.");
+      setShowError(true);
+      console.log("Error during signin:", error);
+    }
+  };
   return (
     <BasicLayout image={bgImage}>
       <Card>
@@ -82,12 +127,24 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" 
+          role="form" 
+          onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput 
+              type="email" 
+              label="Email" 
+              name="email"
+              onChange={handleChange}
+              fullWidth />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput 
+              type="password" 
+              label="Password" 
+              name="password"
+              onChange={handleChange}
+              fullWidth />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
