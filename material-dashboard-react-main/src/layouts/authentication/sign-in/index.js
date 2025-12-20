@@ -84,7 +84,7 @@ const navigate = useNavigate();
         email: "",
         password: "",
       });
-      navigate("/authentication/sign-in");
+      navigate("/dashboard");
     } catch (error) {
       setError("Network error. Please try again later.");
       setShowError(true);
