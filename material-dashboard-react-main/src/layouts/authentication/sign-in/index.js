@@ -62,6 +62,7 @@ function Basic() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    console.log("Submitting form with data:", form);
     try {
       const response = await fetch(`${API_BASE}/api/admin-sigin`, {
         method: "POST",
