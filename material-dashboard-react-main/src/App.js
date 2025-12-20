@@ -101,7 +101,7 @@ export default function App() {
   // Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", direction);
-    const adminUser = localStorage.getItem("userInfo");
+    const adminUser = localStorage.getItem("user");
     console.log("Admin User Info:", adminUser);
     if (!adminUser) {
       <Navigate to="/authentication/sign-in" />;

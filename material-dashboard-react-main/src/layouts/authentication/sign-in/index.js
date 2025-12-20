@@ -82,6 +82,7 @@ function Basic() {
       // Store JWT token if present
       if (result.token) {
         localStorage.setItem("token", result.token);
+        localStorage.setItem("user", JSON.stringify(result.user));
       }
       setForm({
         email: "",
