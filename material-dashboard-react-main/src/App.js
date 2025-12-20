@@ -104,9 +104,9 @@ export default function App() {
     const adminUser = localStorage.getItem("user");
     const parsedUser = adminUser ? JSON.parse(adminUser) : null;
     console.log("Admin User Info:", parsedUser?.name);
-    if (!adminUser) {
-      <Navigate to="/authentication/sign-in" />;
-    }
+    // if (!adminUser) {
+    //   <Navigate to="/authentication/sign-in" />;
+    // }
   }, [direction]);
 
   // Setting page scroll to 0 when changing the route
