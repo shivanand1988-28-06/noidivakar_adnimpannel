@@ -151,10 +151,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton 
-              type="submit"
-              variant="gradient" 
-              color="info" fullWidth>
+              <MDButton type="submit" variant="gradient" color="info" fullWidth>
                 sign in
               </MDButton>
             </MDBox>
