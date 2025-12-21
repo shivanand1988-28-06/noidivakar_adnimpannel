@@ -83,6 +83,7 @@ function Basic() {
       if (result.token) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.admin.name));
+        localStorage.setItem("adminEmail", JSON.stringify(result.admin.email));
       }
       setForm({
         email: "",
