@@ -49,7 +49,7 @@ function Dashboard() {
       console.log("Admin User Info:", adminUser);
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE}/api/admin-sessions/names`, {
+        const response = await fetch(`${API_BASE}/api/admin-active-names`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${adminUser}`,
