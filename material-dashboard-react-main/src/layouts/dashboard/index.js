@@ -34,7 +34,7 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AirlineSeatLegroomExtraOutlined } from "@mui/icons-material";
 
 function Dashboard() {
@@ -44,7 +44,6 @@ function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
 
   useEffect(() => {
-    
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
       console.log("Admin User Info:", adminUser);
@@ -53,8 +52,8 @@ function Dashboard() {
         const response = await fetch(`${API_BASE}/api/admin-sessions/names`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${adminUser}`
-          }
+            Authorization: `Bearer ${adminUser}`,
+          },
         });
         if (!response.ok) {
           const loggedAdmins = await response.json();
@@ -64,6 +63,7 @@ function Dashboard() {
         console.error("Error fetching admin data:", error);
       }
     }
+    loggedAdminData();
   }, []);
   return (
     <DashboardLayout>
