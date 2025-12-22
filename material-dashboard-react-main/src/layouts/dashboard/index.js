@@ -44,24 +44,26 @@ function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
 
   useEffect(() => {
-    const adminUser = localStorage.getItem("user");
-    console.log("Admin User Info:", adminUser);
-
-  async function loggedAdminData() {
-     setLoading(true);
+    
+    async function loggedAdminData() {
+      const adminUser = localStorage.getItem("user");
+      console.log("Admin User Info:", adminUser);
+      setLoading(true);
       try {
         const response = await fetch(`${API_BASE}/api/admin-sessions/names`, {
           method: "GET",
           headers: {
-            
-            "Authorization": `Bearer ${adminUser}`,
-          },
-        })
-      
-  }catch (error) {
+            Authorization: `Bearer ${adminUser}`
+          }
+        });
+        if (!response.ok) {
+          const loggedAdmins = await response.json();
+          console.log("Logged Admins Data:", loggedAdmins);
+        }
+      } catch (error) {
         console.error("Error fetching admin data:", error);
-  }
-  }
+      }
+    }
   }, []);
   return (
     <DashboardLayout>
