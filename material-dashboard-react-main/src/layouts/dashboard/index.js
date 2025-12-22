@@ -38,10 +38,10 @@ import { useEffect } from "react";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
- useEffect(() => {
+  useEffect(() => {
     const adminUser = localStorage.getItem("user");
-      console.log("Admin User Info:", adminUser);
- }, []);
+    console.log("Admin User Info:", adminUser);
+  }, []);
   return (
     <DashboardLayout>
       <DashboardNavbar />
