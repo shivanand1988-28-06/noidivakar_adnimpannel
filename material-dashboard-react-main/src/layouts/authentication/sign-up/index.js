@@ -134,6 +134,7 @@ function Cover() {
                 onChange={handleChange}
                 name="email"
                 value={form.email}
+                autocomplete="username"
               />
             </MDBox>
             <MDBox mb={2}>
@@ -145,6 +146,7 @@ function Cover() {
                 onChange={handleChange}
                 name="password"
                 value={form.password}
+                autocomplete="new-password"
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
