@@ -49,25 +49,25 @@ function Dashboard() {
       const token = localStorage.getItem("token");
       console.log("Admin User Info:", adminUser);
       setLoading(true);
-     try {
-  const response = await fetch(`${API_BASE}/api/admin-active-names`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    credentials: "include" // if your server expects cookies/sessions
-  });
+      try {
+        const response = await fetch(`${API_BASE}/api/admin-active-names`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        });
 
-  const data = await response.json().catch(() => null);
+        const data = await response.json().catch(() => null);
 
-  if (response.ok) {
-    console.log("Logged Admins Data:", data);
-  } else {
-    console.error("Error response:", response.status, data);
-  }
-} catch (error) {
-  console.error("Error fetching admin data:", error);
-}
+        if (response.ok) {
+          console.log("Logged Admins Data:", data);
+        } else {
+          console.error("Error response:", response.status, data);
+        }
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
+      }
     }
     loggedAdminData();
   }, []);
