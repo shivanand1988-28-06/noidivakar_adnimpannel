@@ -134,7 +134,7 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" name="email" onChange={handleChange} fullWidth />
+              <MDInput type="email" label="Email" name="email" onChange={handleChange} fullWidth autocomplete="username" />
             </MDBox>
             <MDBox mb={2}>
               <MDInput
@@ -143,6 +143,7 @@ function Basic() {
                 name="password"
                 onChange={handleChange}
                 fullWidth
+                autocomplete="current-password"
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
