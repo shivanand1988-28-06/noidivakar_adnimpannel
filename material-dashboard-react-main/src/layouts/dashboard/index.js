@@ -46,22 +46,28 @@ function Dashboard() {
   useEffect(() => {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
       console.log("Admin User Info:", adminUser);
       setLoading(true);
-      try {
-        const response = await fetch(`${API_BASE}/api/admin-active-names`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${adminUser}`,
-          },
-        });
-        if (!response.ok) {
-          const loggedAdmins = await response.json();
-          console.log("Logged Admins Data:", loggedAdmins);
-        }
-      } catch (error) {
-        console.error("Error fetching admin data:", error);
-      }
+     try {
+  const response = await fetch(`${API_BASE}/api/admin-active-names`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: "include" // if your server expects cookies/sessions
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (response.ok) {
+    console.log("Logged Admins Data:", data);
+  } else {
+    console.error("Error response:", response.status, data);
+  }
+} catch (error) {
+  console.error("Error fetching admin data:", error);
+}
     }
     loggedAdminData();
   }, []);
