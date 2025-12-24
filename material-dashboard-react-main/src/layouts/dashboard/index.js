@@ -47,28 +47,29 @@ function Dashboard() {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
       const token = localStorage.getItem("token");
-      console.log("Admin User Info:", adminUser);
-      setLoading(true);
-      try {
-        const response = await fetch(`${API_BASE}/api/admin-active-names`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-        });
+      if (adminUser === "Admin") {
+        setLoading(true);
+        try {
+          const response = await fetch(`${API_BASE}/api/admin-active-names`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+          });
 
-        const data = await response.json().catch(() => null);
-     
-        if (response.ok) {
-          
-          setAdminData(data.activeAdmins || []);
-          console.log(adminData);
-        } else {
-          console.error("Error response:", response.status, data);
+          const data = await response.json().catch(() => null);
+          if (response.ok) {
+            setAdminData(data.activeAdmins || []);
+            console.log(adminData);
+          } else {
+            console.error("Error response:", response.status, data);
+          }
+        } catch (error) {
+          console.error("Error fetching admin data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching admin data:", error);
+      } else {
+        console.log("Admin User Info:", adminUser);
       }
     }
     loggedAdminData();
