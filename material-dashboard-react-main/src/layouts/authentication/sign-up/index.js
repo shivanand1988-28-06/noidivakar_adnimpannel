@@ -153,7 +153,7 @@ function Cover() {
                 onChange={handleChange}
                 name="password"
                 value={form.password}
-                autocomplete="new-password"
+                autocomplete="current-password"
               />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
