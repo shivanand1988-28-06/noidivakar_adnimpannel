@@ -40,7 +40,7 @@ import { AirlineSeatLegroomExtraOutlined } from "@mui/icons-material";
 function Dashboard() {
   const API_BASE = "https://web-production-04c51.up.railway.app";
   const [loading, setLoading] = useState(false);
-
+  const [adminData, setAdminData] = useState([]);
   const { sales, tasks } = reportsLineChartData;
 
   useEffect(() => {
@@ -59,9 +59,11 @@ function Dashboard() {
         });
 
         const data = await response.json().catch(() => null);
-
+     
         if (response.ok) {
-          console.log("Logged Admins Data:", data);
+          
+          setAdminData(data.activeAdmins || []);
+          console.log(adminData);
         } else {
           console.error("Error response:", response.status, data);
         }
