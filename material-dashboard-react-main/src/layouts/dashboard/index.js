@@ -70,31 +70,31 @@ function Dashboard() {
         } catch (error) {
           console.error("Error fetching admin data:", error);
         }
-      } else if(adminUser !== "Admin"){
-         setLoading(true);
-         setCurrentUser(adminUser);
-         try {
-      // Replace with the actual admin name
-fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`)
-  .then(res => res.json())
-  .then(data => {
-    if (data.success) {
-      setAssignedTasks(data.assignedTask || []);
-      console.log("Assigned tasks:", data.assignedTask);
-    } else {
-      console.error("Error:", data.message);
-    }
-  })
-  .catch(err => console.error("Request failed:", err));
-
-      }catch (error) {
-        console.error("Error fetching assigned tasks:", error);
+      } else if (adminUser !== "Admin") {
+        setLoading(true);
+        setCurrentUser(adminUser);
+        try {
+          // Replace with the actual admin name
+          fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                setAssignedTasks(data.assignedTask || []);
+                console.log("Assigned tasks:", data.assignedTask);
+              } else {
+                console.error("Error:", data.message);
+              }
+            })
+            .catch((err) => console.error("Request failed:", err));
+        } catch (error) {
+          console.error("Error fetching assigned tasks:", error);
+        }
+      } else {
+        console.log("No admin user found in localStorage.");
       }
-    }else{
-      console.log("No admin user found in localStorage.");
+      loggedAdminData();
     }
-    loggedAdminData();
-}}, []);
+  }, []);
   return (
     <DashboardLayout>
       <DashboardNavbar />
