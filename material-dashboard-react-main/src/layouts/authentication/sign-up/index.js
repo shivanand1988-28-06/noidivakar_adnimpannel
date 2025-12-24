@@ -53,6 +53,7 @@ function Cover() {
   };
   const handleSubmit = async (e) => {
   e.preventDefault();
+  console.log("Form submitted:", form);
     setError("")
     // Client-side validation for required fields
     if (!form.name || !form.email || !form.password) {
