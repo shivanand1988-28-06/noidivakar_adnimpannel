@@ -40,17 +40,19 @@ import { AirlineSeatLegroomExtraOutlined } from "@mui/icons-material";
 function Dashboard() {
   const API_BASE = "https://web-production-04c51.up.railway.app";
   const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState("");
   const [adminData, setAdminData] = useState([]);
   const { sales, tasks } = reportsLineChartData;
-
+  const[assignedTasks, setAssignedTasks] = useState([]);
   useEffect(() => {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
       const token = localStorage.getItem("token");
       if (adminUser === "Admin") {
         setLoading(true);
+        setCurrentUser(adminUser);
         try {
-          const response = await fetch(`${API_BASE}/api/admin-active-names`, {
+          const response = await fetch(`${API_BASE}/api/admin/all-names`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -60,7 +62,7 @@ function Dashboard() {
 
           const data = await response.json().catch(() => null);
           if (response.ok) {
-            setAdminData(data.activeAdmins || []);
+            setAdminData(data.adminNames || []);
             console.log(adminData);
           } else {
             console.error("Error response:", response.status, data);
@@ -68,128 +70,144 @@ function Dashboard() {
         } catch (error) {
           console.error("Error fetching admin data:", error);
         }
-      } else {
-        console.log("Admin User Info:", adminUser);
+      } else if(adminUser !== "Admin"){
+         setLoading(true);
+         setCurrentUser(adminUser);
+         try {
+      // Replace with the actual admin name
+fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`)
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      setAssignedTasks(data.assignedTask || []);
+      console.log("Assigned tasks:", data.assignedTask);
+    } else {
+      console.error("Error:", data.message);
+    }
+  })
+  .catch(err => console.error("Request failed:", err));
+
+      }catch (error) {
+        console.error("Error fetching assigned tasks:", error);
       }
+    }else{
+      console.log("No admin user found in localStorage.");
     }
     loggedAdminData();
-  }, []);
+}}, []);
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
-              />
+        {currentUser === "Admin" ? (
+          <>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6} lg={3}>
+                <MDBox mb={1.5}>
+                  <ComplexStatisticsCard
+                    color="dark"
+                    icon="weekend"
+                    title="admin-employess"
+                    count={adminData.length}
+                    percentage={{
+                      color: "success",
+                      amount: "+55%",
+                      label: "than lask week",
+                    }}
+                  />
+                </MDBox>
+              </Grid>
+            </Grid>
+            <MDBox mt={4.5}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6} lg={4}>
+                  <MDBox mb={3}>
+                    <ReportsBarChart
+                      color="info"
+                      title="website views"
+                      description="Last Campaign Performance"
+                      date="campaign sent 2 days ago"
+                      chart={reportsBarChartData}
+                    />
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                  <MDBox mb={3}>
+                    <ReportsLineChart
+                      color="success"
+                      title="daily sales"
+                      description={
+                        <>
+                          (<strong>+15%</strong>) increase in today sales.
+                        </>
+                      }
+                      date="updated 4 min ago"
+                      chart={sales}
+                    />
+                  </MDBox>
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                  <MDBox mb={3}>
+                    <ReportsLineChart
+                      color="dark"
+                      title="completed tasks"
+                      description="Last Campaign Performance"
+                      date="just updated"
+                      chart={tasks}
+                    />
+                  </MDBox>
+                </Grid>
+              </Grid>
             </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
-                percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
-                }}
-              />
+            <MDBox>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6} lg={8}>
+                  <Projects />
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                  <OrdersOverview />
+                </Grid>
+              </Grid>
             </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
-                }}
-              />
+          </>
+        ) : (
+          <>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <MDBox mb={1.5}>
+                  <ComplexStatisticsCard
+                    color="info"
+                    icon="assignment"
+                    title="Assigned Tasks"
+                    count={assignedTasks.length}
+                    percentage={{
+                      color: "info",
+                      amount: "",
+                      label: "Your assigned tasks",
+                    }}
+                  />
+                </MDBox>
+              </Grid>
+            </Grid>
+            <MDBox mt={4.5}>
+              <Grid container spacing={3}>
+                {assignedTasks.map((task, idx) => (
+                  <Grid item xs={12} md={6} lg={4} key={idx}>
+                    <MDBox mb={3}>
+                      <ReportsLineChart
+                        color="info"
+                        title={task.title || "Task"}
+                        description={task.description || "No description"}
+                        date={task.dueDate ? `Due: ${task.dueDate}` : "No due date"}
+                        chart={tasks}
+                      />
+                    </MDBox>
+                  </Grid>
+                ))}
+              </Grid>
             </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
-                }}
-              />
-            </MDBox>
-          </Grid>
-        </Grid>
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
-        <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Projects />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
-          </Grid>
-        </MDBox>
+          </>
+        )}
       </MDBox>
       <Footer />
     </DashboardLayout>
