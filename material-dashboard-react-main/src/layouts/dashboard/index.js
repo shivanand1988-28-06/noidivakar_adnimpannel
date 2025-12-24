@@ -43,7 +43,7 @@ function Dashboard() {
   const [currentUser, setCurrentUser] = useState("");
   const [adminData, setAdminData] = useState([]);
   const { sales, tasks } = reportsLineChartData;
-  const[assignedTasks, setAssignedTasks] = useState([]);
+  const [assignedTasks, setAssignedTasks] = useState([]);
   useEffect(() => {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
