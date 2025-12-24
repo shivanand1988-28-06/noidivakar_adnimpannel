@@ -56,7 +56,7 @@ function Cover() {
     setError("");
     // Client-side validation for required fields
     if (!form.name || !form.email || !form.password) {
-      setError("Name, email, and password are required.");
+      setError("name, email, and password are required.");
       setShowError(true);
       return;
     }
