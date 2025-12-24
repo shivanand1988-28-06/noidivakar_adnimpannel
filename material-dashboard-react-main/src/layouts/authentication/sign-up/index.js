@@ -52,8 +52,8 @@ function Cover() {
     setShowError(false);
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+    setError("")
     // Client-side validation for required fields
     if (!form.name || !form.email || !form.password) {
       setError("name, email, and password are required.");
