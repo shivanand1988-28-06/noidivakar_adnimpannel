@@ -51,7 +51,7 @@ function Dashboard() {
       if (adminUser === "Admin") {
         setLoading(true);
         setCurrentUser(adminUser);
-        console.log(currentUser);
+        console.log(currentUser,adminUser);
         try {
           const response = await fetch(`${API_BASE}/api/admin/all-names`, {
             method: "GET",
