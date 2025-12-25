@@ -44,6 +44,7 @@ function Dashboard() {
   const [adminData, setAdminData] = useState([]);
   const { sales, tasks } = reportsLineChartData;
   const [assignedTasks, setAssignedTasks] = useState([]);
+  const [userNotFound, setUserNotFound] = useState(false);
   useEffect(() => {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
@@ -51,10 +52,11 @@ function Dashboard() {
       if (!adminUser) {
         setLoading(false);
         setCurrentUser("");
+        setUserNotFound(true);
         console.error("Admin user not found in localStorage.");
-        // Optionally, redirect to login or show a message
         return;
       }
+      setUserNotFound(false);
       if (adminUser === "Admin") {
         setLoading(true);
         setCurrentUser(adminUser);
@@ -107,6 +109,33 @@ function Dashboard() {
     }
     loggedAdminData();
   }, []);
+  if (userNotFound) {
+    return (
+      <DashboardLayout>
+        <DashboardNavbar />
+        <MDBox py={3}>
+          <Grid container justifyContent="center">
+            <Grid item>
+              <MDBox mb={2}>
+                <ComplexStatisticsCard
+                  color="error"
+                  icon="error"
+                  title="User Not Found"
+                  count={0}
+                  percentage={{
+                    color: "error",
+                    amount: "",
+                    label: "Please log in to continue.",
+                  }}
+                />
+              </MDBox>
+            </Grid>
+          </Grid>
+        </MDBox>
+        <Footer />
+      </DashboardLayout>
+    );
+  }
   return (
     <DashboardLayout>
       <DashboardNavbar />
