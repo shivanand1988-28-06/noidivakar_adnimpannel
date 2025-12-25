@@ -93,8 +93,9 @@ function Dashboard() {
       } else {
         console.log("No admin user found in localStorage.");
       }
-      loggedAdminData();
+     
     }
+     loggedAdminData();
   }, []);
   return (
     <DashboardLayout>
