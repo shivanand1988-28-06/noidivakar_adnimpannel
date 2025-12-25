@@ -49,6 +49,7 @@ function Dashboard() {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
       const token = localStorage.getItem("token");
+      
       if (!adminUser) {
         setLoading(false);
         setCurrentUser("");
@@ -64,7 +65,6 @@ function Dashboard() {
         try {
           const response = await fetch(`${API_BASE}/api/admin/all-names`, {
             method: "GET",
-            credentials: "include",
           });
 
           const data = await response.json().catch(() => null);
@@ -84,7 +84,6 @@ function Dashboard() {
         try {
           fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
             method: "GET",
-            credentials: "include",
           })
             .then((res) => res.json())
             .then((data) => {
