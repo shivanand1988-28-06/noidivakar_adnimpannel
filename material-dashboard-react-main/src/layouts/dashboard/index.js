@@ -75,7 +75,7 @@ function Dashboard() {
         setLoading(true);
         setCurrentUser(adminUser);
         try {
-          fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`,{
+          fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
