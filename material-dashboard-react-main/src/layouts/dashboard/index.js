@@ -75,8 +75,13 @@ function Dashboard() {
         setLoading(true);
         setCurrentUser(adminUser);
         try {
-          // Replace with the actual admin name
-          fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`)
+          fetch(`/api/admin/assigned-tasks/${encodeURIComponent(currentUser)}`,{
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+          })
             .then((res) => res.json())
             .then((data) => {
               if (data.success) {
