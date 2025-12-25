@@ -48,6 +48,13 @@ function Dashboard() {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
       const token = localStorage.getItem("token");
+      if (!adminUser) {
+        setLoading(false);
+        setCurrentUser("");
+        console.error("Admin user not found in localStorage.");
+        // Optionally, redirect to login or show a message
+        return;
+      }
       if (adminUser === "Admin") {
         setLoading(true);
         setCurrentUser(adminUser);
@@ -71,10 +78,10 @@ function Dashboard() {
         } catch (error) {
           console.error("Error fetching admin data:", error);
         }
-      } else if (adminUser !== "Admin") {
+      } else {
         setLoading(true);
         setCurrentUser(adminUser);
-        console.log("Fetching tasks for user:", adminUser);
+        console.log("Fetching tasks for user:", adminUser, currentUser);
         try {
           fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
             method: "GET",
@@ -96,8 +103,6 @@ function Dashboard() {
         } catch (error) {
           console.error("Error fetching assigned tasks:", error);
         }
-      } else {
-        console.log("No admin user found in localStorage.");
       }
     }
     loggedAdminData();
