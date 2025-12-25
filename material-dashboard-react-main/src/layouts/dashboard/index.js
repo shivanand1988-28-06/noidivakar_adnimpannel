@@ -64,9 +64,7 @@ function Dashboard() {
         try {
           const response = await fetch(`${API_BASE}/api/admin/all-names`, {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+           
             credentials: "include",
           });
 
@@ -87,9 +85,6 @@ function Dashboard() {
         try {
           fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
             credentials: "include",
           })
             .then((res) => res.json())
