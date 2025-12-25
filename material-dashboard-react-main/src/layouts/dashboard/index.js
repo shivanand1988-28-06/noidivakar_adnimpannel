@@ -64,7 +64,6 @@ function Dashboard() {
         try {
           const response = await fetch(`${API_BASE}/api/admin/all-names`, {
             method: "GET",
-           
             credentials: "include",
           });
 
