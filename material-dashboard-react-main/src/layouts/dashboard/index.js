@@ -49,7 +49,6 @@ function Dashboard() {
     async function loggedAdminData() {
       const adminUser = localStorage.getItem("user");
       const token = localStorage.getItem("token");
-      
       if (!adminUser) {
         setLoading(false);
         setCurrentUser("");
