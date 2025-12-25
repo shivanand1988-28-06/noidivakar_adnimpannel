@@ -74,7 +74,7 @@ function Dashboard() {
       } else if (adminUser !== "Admin") {
         setLoading(true);
         setCurrentUser(adminUser);
-        console.log("Fetching tasks for user:", adminUser, currentUser);
+        console.log("Fetching tasks for user:", adminUser);
         try {
           fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
             method: "GET",
