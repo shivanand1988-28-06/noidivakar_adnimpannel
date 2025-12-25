@@ -47,7 +47,7 @@ function Dashboard() {
   const [userNotFound, setUserNotFound] = useState(false);
   useEffect(() => {
     async function loggedAdminData() {
-      const adminUser = localStorage.getItem("user");
+      const adminUser = (localStorage.getItem("user") || "").replace(/^"|"$/g, "");
       const token = localStorage.getItem("token");
       if (!adminUser) {
         setLoading(false);
