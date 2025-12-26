@@ -107,48 +107,6 @@ function Dashboard() {
           console.error("Error fetching assigned tasks:", error);
         }
       }
-      // Duplicate block removed: adminUser and token already declared above
-      if (adminUser === "Admin") {
-        setLoading(true);
-        setCurrentUser(adminUser);
-        console.log("pass:", currentUser, adminUser);
-        try {
-          const response = await fetch(`${API_BASE}/api/admin/all-names`, {
-            method: "GET",
-          });
-
-          const data = await response.json().catch(() => null);
-          if (response.ok) {
-            setAdminData(data.adminNames || []);
-            console.log(adminData);
-          } else {
-            console.error("Error response:", response.status, data);
-          }
-        } catch (error) {
-          console.error("Error fetching admin data:", error);
-        }
-      } else {
-        setLoading(true);
-        setCurrentUser(adminUser);
-        console.log("Fetching tasks for user:", adminUser, currentUser);
-        try {
-          fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.success) {
-                setAssignedTasks(data.assignedTask || []);
-                console.log("Assigned tasks:", data.assignedTask);
-              } else {
-                console.error("Error:", data.message);
-              }
-            })
-            .catch((err) => console.error("Request failed:", err));
-        } catch (error) {
-          console.error("Error fetching assigned tasks:", error);
-        }
-      }
     }
     loggedAdminData();
   }, []);
