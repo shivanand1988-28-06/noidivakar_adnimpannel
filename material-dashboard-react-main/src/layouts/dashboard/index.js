@@ -66,7 +66,7 @@ function Dashboard() {
         try {
           const [adminRes, summaryRes] = await Promise.all([
             fetch(`${API_BASE}/api/admin/all-names`, { method: "GET" }),
-            fetch(`${API_BASE}/api/noidata/summary`, { method: "GET" })
+            fetch(`${API_BASE}/api/noidata/summary`, { method: "GET" }),
           ]);
           const adminDataJson = await adminRes.json().catch(() => null);
           const summaryDataJson = await summaryRes.json().catch(() => null);
@@ -127,7 +127,7 @@ function Dashboard() {
         } catch (error) {
           console.error("Error fetching admin data:", error);
         }
-  } else {
+      } else {
         setLoading(true);
         setCurrentUser(adminUser);
         console.log("Fetching tasks for user:", adminUser, currentUser);
