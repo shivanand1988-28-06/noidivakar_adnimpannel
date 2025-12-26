@@ -45,6 +45,7 @@ function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
   const [assignedTasks, setAssignedTasks] = useState([]);
   const [userNotFound, setUserNotFound] = useState(false);
+  const [taskData, setTaskData] = useState([]);
   useEffect(() => {
     async function loggedAdminData() {
       const adminUser = (localStorage.getItem("user") || "").replace(/^"|"$/g, "");
@@ -57,6 +58,56 @@ function Dashboard() {
         return;
       }
       setUserNotFound(false);
+      if (adminUser === "Admin") {
+        // Fetch both admin names and task summary in parallel for admin
+        setLoading(true);
+        setCurrentUser(adminUser);
+        console.log("pass:", currentUser, adminUser);
+        try {
+          const [adminRes, summaryRes] = await Promise.all([
+            fetch(`${API_BASE}/api/admin/all-names`, { method: "GET" }),
+            fetch(`${API_BASE}/api/noidata/summary`, { method: "GET" })
+          ]);
+          const adminDataJson = await adminRes.json().catch(() => null);
+          const summaryDataJson = await summaryRes.json().catch(() => null);
+          if (adminRes.ok) {
+            setAdminData(adminDataJson.adminNames || []);
+            console.log("Fetched admin names:", adminDataJson.adminNames);
+          } else {
+            console.error("Error response (admin names):", adminRes.status, adminDataJson);
+          }
+          if (summaryRes.ok) {
+            setTaskData(summaryDataJson || []);
+            console.log("Fetched task summary:", summaryDataJson);
+          } else {
+            console.error("Error fetching task summary:", summaryRes.status, summaryDataJson);
+          }
+        } catch (error) {
+          console.error("Error fetching admin data or task summary:", error);
+        }
+      } else {
+        setLoading(true);
+        setCurrentUser(adminUser);
+        console.log("Fetching tasks for user:", adminUser, currentUser);
+        try {
+          fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                setAssignedTasks(data.assignedTask || []);
+                console.log("Assigned tasks:", data.assignedTask);
+              } else {
+                console.error("Error:", data.message);
+              }
+            })
+            .catch((err) => console.error("Request failed:", err));
+        } catch (error) {
+          console.error("Error fetching assigned tasks:", error);
+        }
+      }
+      // Duplicate block removed: adminUser and token already declared above
       if (adminUser === "Admin") {
         setLoading(true);
         setCurrentUser(adminUser);
@@ -76,7 +127,7 @@ function Dashboard() {
         } catch (error) {
           console.error("Error fetching admin data:", error);
         }
-      } else {
+  } else {
         setLoading(true);
         setCurrentUser(adminUser);
         console.log("Fetching tasks for user:", adminUser, currentUser);
