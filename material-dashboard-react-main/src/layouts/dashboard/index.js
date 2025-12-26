@@ -134,6 +134,7 @@ function Dashboard() {
       <MDBox py={3}>
         {currentUser === "Admin" ? (
           <>
+            {/* Admin summary card */}
             <Grid container spacing={3}>
               <Grid item xs={12} md={6} lg={3}>
                 <MDBox mb={1.5}>
@@ -151,6 +152,27 @@ function Dashboard() {
                 </MDBox>
               </Grid>
             </Grid>
+            {/* Admin names cards */}
+            <Grid container spacing={3}>
+              {adminData.map((name, idx) => (
+                <Grid item xs={12} md={6} lg={3} key={idx}>
+                  <MDBox mb={1.5}>
+                    <ComplexStatisticsCard
+                      color="dark"
+                      icon="person"
+                      title={name}
+                      count={1}
+                      percentage={{
+                        color: "success",
+                        amount: "",
+                        label: "Admin User",
+                      }}
+                    />
+                  </MDBox>
+                </Grid>
+              ))}
+            </Grid>
+            {/* Charts and other widgets */}
             <MDBox mt={4.5}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6} lg={4}>
