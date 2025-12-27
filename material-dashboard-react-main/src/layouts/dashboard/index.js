@@ -1,3 +1,9 @@
+import React from "react";
+import Icon from "@mui/material/Icon";
+import SimpleBlogCard from "examples/Cards/BlogCards/SimpleBlogCard";
+import DefaultInfoCard from "examples/Cards/InfoCards/DefaultInfoCard";
+import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
+import DefaultProjectCard from "examples/Cards/ProjectCards/DefaultProjectCard";
 /**
 =========================================================
 * Material Dashboard 2 React - v2.2.0
@@ -15,10 +21,8 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -26,27 +30,22 @@ import Footer from "examples/Footer";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-
-// Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-
-// Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
-import { useState, useEffect } from "react";
-import { AirlineSeatLegroomExtraOutlined } from "@mui/icons-material";
+import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 
 function Dashboard() {
   const API_BASE = "https://web-production-04c51.up.railway.app";
-  const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState("");
-  const [adminData, setAdminData] = useState([]);
-  const { sales, tasks } = reportsLineChartData;
-  const [assignedTasks, setAssignedTasks] = useState([]);
-  const [userNotFound, setUserNotFound] = useState(false);
-  const [taskData, setTaskData] = useState([]);
-  useEffect(() => {
+  const [loading, setLoading] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState("");
+  const [adminData, setAdminData] = React.useState([]);
+  const [assignedTasks, setAssignedTasks] = React.useState([]);
+  const [userNotFound, setUserNotFound] = React.useState(false);
+  const [taskData, setTaskData] = React.useState([]);
+  const sales = [];
+  const tasks = [];
+
+  React.useEffect(() => {
     async function loggedAdminData() {
       const adminUser = (localStorage.getItem("user") || "").replace(/^"|"$/g, "");
       const token = localStorage.getItem("token");
@@ -59,10 +58,10 @@ function Dashboard() {
       }
       setUserNotFound(false);
       if (adminUser === "Admin") {
-        // Fetch both admin names and task summary in parallel for admin
         setLoading(true);
         setCurrentUser(adminUser);
-        console.log("pass:", currentUser, adminUser);
+        // Log adminUser directly for immediate value
+        console.log("Setting Current User to:", adminUser);
         try {
           const [adminRes, summaryRes] = await Promise.all([
             fetch(`${API_BASE}/api/admin/all-names`, { method: "GET" }),
@@ -72,13 +71,13 @@ function Dashboard() {
           const summaryDataJson = await summaryRes.json().catch(() => null);
           if (adminRes.ok) {
             setAdminData(adminDataJson.adminNames || []);
-            console.log("Fetched admin names:", adminDataJson.adminNames);
           } else {
             console.error("Error response (admin names):", adminRes.status, adminDataJson);
           }
           if (summaryRes.ok) {
+            // Log summaryDataJson immediately for debugging
+            console.log("Setting taskData to:", summaryDataJson);
             setTaskData(summaryDataJson || []);
-            console.log("Fetched task summary:", summaryDataJson);
           } else {
             console.error("Error fetching task summary:", summaryRes.status, summaryDataJson);
           }
@@ -88,7 +87,7 @@ function Dashboard() {
       } else {
         setLoading(true);
         setCurrentUser(adminUser);
-        console.log("Fetching tasks for user:", adminUser, currentUser);
+        console.log("Current User:", currentUser);
         try {
           fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
             method: "GET",
@@ -97,7 +96,6 @@ function Dashboard() {
             .then((data) => {
               if (data.success) {
                 setAssignedTasks(data.assignedTask || []);
-                console.log("Assigned tasks:", data.assignedTask);
               } else {
                 console.error("Error:", data.message);
               }
@@ -110,6 +108,7 @@ function Dashboard() {
     }
     loggedAdminData();
   }, []);
+
   if (userNotFound) {
     return (
       <DashboardLayout>
@@ -123,11 +122,7 @@ function Dashboard() {
                   icon="error"
                   title="User Not Found"
                   count={0}
-                  percentage={{
-                    color: "error",
-                    amount: "",
-                    label: "Please log in to continue.",
-                  }}
+                  percentage={{ color: "error", amount: "", label: "Please log in to continue." }}
                 />
               </MDBox>
             </Grid>
@@ -137,32 +132,122 @@ function Dashboard() {
       </DashboardLayout>
     );
   }
+
+  // Main dashboard render
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
         {currentUser === "Admin" ? (
           <>
+            {/* ProfileInfoCard for each taskData item */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              {Array.isArray(taskData) &&
+                taskData.map((task, idx) => (
+                  <Grid item xs={12} md={6} lg={4} key={idx}>
+                    <ProfileInfoCard
+                      title={task.title || `Task ${idx + 1}`}
+                      description={task.description || "No description"}
+                      info={{
+                        ...(task.fullName ? { fullName: task.fullName } : {}),
+                        ...(task.email ? { email: task.email } : {}),
+                        ...(task.status ? { status: task.status } : {}),
+                      }}
+                      social={[
+                        {
+                          link: "#",
+                          icon: <Icon>facebook</Icon>,
+                          color: "facebook",
+                        },
+                        {
+                          link: "#",
+                          icon: <Icon>twitter</Icon>,
+                          color: "twitter",
+                        },
+                      ]}
+                      action={{ route: "/profile", tooltip: "Edit Profile" }}
+                      shadow
+                    />
+                  </Grid>
+                ))}
+            </Grid>
+            {/* Showcase of all example cards */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid item xs={12} md={6} lg={4}>
+                <SimpleBlogCard
+                  image="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+                  title="Simple Blog Card"
+                  description="A short blog card description."
+                  action={{ type: "internal", route: "/", color: "info", label: "Read More" }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6} lg={4}>
+                <DefaultInfoCard
+                  color="primary"
+                  icon="info"
+                  title="Info Card"
+                  description="Some info card description."
+                  value="123"
+                />
+              </Grid>
+              <Grid item xs={12} md={6} lg={4}>
+                <ProfileInfoCard
+                  title="Profile Info"
+                  description="User profile description."
+                  info={{ fullName: "John Doe", email: "john@example.com" }}
+                  social={[
+                    { link: "#", icon: <Icon>facebook</Icon>, color: "facebook" },
+                    { link: "#", icon: <Icon>twitter</Icon>, color: "twitter" },
+                  ]}
+                  action={{ route: "/profile", tooltip: "Edit Profile" }}
+                  shadow
+                />
+              </Grid>
+              <Grid item xs={12} md={6} lg={4}>
+                <DefaultProjectCard
+                  image="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80"
+                  label="Project"
+                  title="Project Card"
+                  description="A project card description."
+                  action={{
+                    type: "internal",
+                    route: "/project",
+                    color: "info",
+                    label: "View Project",
+                  }}
+                  authors={[
+                    { image: "https://randomuser.me/api/portraits/men/32.jpg", name: "Alice" },
+                    { image: "https://randomuser.me/api/portraits/men/33.jpg", name: "Bob" },
+                  ]}
+                />
+              </Grid>
+              <Grid item xs={12} md={6} lg={4}>
+                <ComplexStatisticsCard
+                  color="success"
+                  icon="leaderboard"
+                  title="Statistics Card"
+                  count={456}
+                  percentage={{ color: "success", amount: "+20%", label: "since last month" }}
+                />
+              </Grid>
+            </Grid>
             {/* Admin summary card */}
             <Grid container spacing={3}>
               <Grid item xs={12} md={6} lg={3}>
                 <MDBox mb={1.5}>
                   <ComplexStatisticsCard
-                    color="dark"
-                    icon="weekend"
-                    title="admin-employess"
-                    count={adminData.length}
+                    color="info"
+                    icon="person"
+                    title="Sample Card"
+                    count={42}
                     percentage={{
                       color: "success",
-                      amount: "+55%",
-                      label: "than lask week",
+                      amount: "+10%",
+                      label: "since last week",
                     }}
                   />
                 </MDBox>
               </Grid>
-            </Grid>
-            {/* Admin names cards */}
-            <Grid container spacing={3}>
               {adminData.map((name, idx) => (
                 <Grid item xs={12} md={6} lg={3} key={idx}>
                   <MDBox mb={1.5}>
