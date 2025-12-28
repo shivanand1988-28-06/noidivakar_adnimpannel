@@ -27,6 +27,7 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
@@ -35,6 +36,7 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 
 function Dashboard() {
+  const isMobile = useMediaQuery("(max-width:600px)");
   // Track expanded card and assigned admin per card
   const [expandedCard, setExpandedCard] = React.useState(null);
   const [assignedTo, setAssignedTo] = React.useState({});
@@ -131,7 +133,7 @@ function Dashboard() {
             </Grid>
           </Grid>
         </MDBox>
-        <Footer />
+        {!isMobile && <Footer />}
       </DashboardLayout>
     );
   }
