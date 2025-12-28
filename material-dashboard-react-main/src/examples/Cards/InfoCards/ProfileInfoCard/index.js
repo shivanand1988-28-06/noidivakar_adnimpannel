@@ -13,6 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import React from "react";
 // react-routers components
 import { Link } from "react-router-dom";
 
@@ -24,6 +25,8 @@ import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
 import Icon from "@mui/material/Icon";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -33,11 +36,11 @@ import MDTypography from "components/MDTypography";
 import colors from "assets/theme/base/colors";
 import typography from "assets/theme/base/typography";
 
-function ProfileInfoCard({ title, description, info, social, action, shadow }) {
+
+function ProfileInfoCard({ title, description, info, action, shadow }) {
   const labels = [];
   const values = [];
-  const { socialMediaColors } = colors;
-  const { size } = typography;
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
   // Convert this form `objectKey` of the object key in to this `object key`
   Object.keys(info).forEach((el) => {
@@ -55,67 +58,103 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
   Object.values(info).forEach((el) => values.push(el));
 
   // Render the card info items
+  const handleCopy = (text) => {
+    if (navigator && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const renderItems = labels.map((label, key) => (
-    <MDBox key={label} display="flex" py={1} pr={2}>
+    <MDBox key={label} display="flex" alignItems="center" py={1} pr={2}>
       <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
         {label}: &nbsp;
       </MDTypography>
-      <MDTypography variant="button" fontWeight="regular" color="text">
+      <MDTypography variant="button" fontWeight="regular" color="text" display="flex" alignItems="center">
         &nbsp;{values[key]}
+        {label.toLowerCase() === "status" && !!values[key] && (
+          <span
+            style={{
+              display: "inline-block",
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              marginLeft: 8,
+              backgroundColor:
+                values[key].toLowerCase() === "approved"
+                  ? "#4caf50"
+                  : values[key].toLowerCase() === "pending"
+                  ? "#ff9800"
+                  : values[key].toLowerCase() === "rejected"
+                  ? "#f44336"
+                  : "#9e9e9e",
+            }}
+          />
+        )}
       </MDTypography>
+      {label.toLowerCase().includes("application") && typeof values[key] === "string" && (
+        <Tooltip title="Copy" placement="top">
+          <Icon
+            sx={{ cursor: "pointer", ml: 1, fontSize: 18 }}
+            onClick={() => handleCopy(values[key])}
+          >
+            content_copy
+          </Icon>
+        </Tooltip>
+      )}
+      {label.toLowerCase().includes("assigned to") && !!values[key] && (
+        <Icon sx={{ color: "success.main", ml: 1, fontSize: 18 }}>check_circle</Icon>
+      )}
     </MDBox>
   ));
 
-  // Render the card social media icons
-  const renderSocial = social.map(({ link, icon, color }) => (
-    <MDBox
-      key={color}
-      component="a"
-      href={link}
-      target="_blank"
-      rel="noreferrer"
-      fontSize={size.lg}
-      color={socialMediaColors[color].main}
-      pr={1}
-      pl={0.5}
-      lineHeight={1}
-    >
-      {icon}
-    </MDBox>
-  ));
+  // Social section removed
 
   return (
-    <Card sx={{ height: "100%", boxShadow: !shadow && "none" }}>
-      <MDBox display="flex" justifyContent="space-between" alignItems="center" pt={2} px={2}>
-        <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
-          {title}
-        </MDTypography>
-        <MDTypography component={Link} to={action.route} variant="body2" color="secondary">
-          <Tooltip title={action.tooltip} placement="top">
-            <Icon>edit</Icon>
-          </Tooltip>
-        </MDTypography>
-      </MDBox>
-      <MDBox p={2}>
-        <MDBox mb={2} lineHeight={1}>
-          <MDTypography variant="button" color="text" fontWeight="light">
-            {description}
+    <>
+      <Card sx={{ height: "100%", boxShadow: !shadow && "none" }}>
+        <MDBox display="flex" justifyContent="space-between" alignItems="center" pt={2} px={2}>
+          <MDTypography variant="h6" fontWeight="medium" textTransform="capitalize">
+            {title}
+          </MDTypography>
+          <MDTypography component={Link} to={action.route} variant="body2" color="secondary">
+            <Tooltip title={action.tooltip} placement="top">
+              <Icon>edit</Icon>
+            </Tooltip>
           </MDTypography>
         </MDBox>
-        <MDBox opacity={0.3}>
-          <Divider />
-        </MDBox>
-        <MDBox>
-          {renderItems}
-          <MDBox display="flex" py={1} pr={2}>
-            <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
-              social: &nbsp;
+        <MDBox p={2}>
+          <MDBox mb={2} lineHeight={1}>
+            <MDTypography variant="button" color="text" fontWeight="light">
+              {description}
             </MDTypography>
-            {renderSocial}
+          </MDBox>
+          <MDBox opacity={0.3}>
+            <Divider />
+          </MDBox>
+          <MDBox>
+            {renderItems}
           </MDBox>
         </MDBox>
-      </MDBox>
-    </Card>
+      </Card>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={1500}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <MuiAlert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }} elevation={6} variant="filled">
+          Copied!
+        </MuiAlert>
+      </Snackbar>
+    </>
   );
 }
 
@@ -129,7 +168,6 @@ ProfileInfoCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   info: PropTypes.objectOf(PropTypes.string).isRequired,
-  social: PropTypes.arrayOf(PropTypes.object).isRequired,
   action: PropTypes.shape({
     route: PropTypes.string.isRequired,
     tooltip: PropTypes.string.isRequired,

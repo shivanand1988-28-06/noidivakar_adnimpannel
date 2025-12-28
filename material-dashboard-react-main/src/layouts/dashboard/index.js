@@ -35,6 +35,9 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 
 function Dashboard() {
+  // Track expanded card and assigned admin per card
+  const [expandedCard, setExpandedCard] = React.useState(null);
+  const [assignedTo, setAssignedTo] = React.useState({});
   const API_BASE = "https://web-production-04c51.up.railway.app";
   const [loading, setLoading] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState("");
@@ -47,7 +50,7 @@ function Dashboard() {
 
   React.useEffect(() => {
     async function loggedAdminData() {
-      const adminUser = (localStorage.getItem("user") || "").replace(/^"|"$/g, "");
+      const adminUser = (localStorage.getItem("user") || "").replace(/^"|"$/g, "").trim();
       const token = localStorage.getItem("token");
       if (!adminUser) {
         setLoading(false);
@@ -70,14 +73,14 @@ function Dashboard() {
           const adminDataJson = await adminRes.json().catch(() => null);
           const summaryDataJson = await summaryRes.json().catch(() => null);
           if (adminRes.ok) {
-            setAdminData(adminDataJson.adminNames || []);
+            setAdminData((adminDataJson && adminDataJson.adminNames) || []);
           } else {
             console.error("Error response (admin names):", adminRes.status, adminDataJson);
           }
           if (summaryRes.ok) {
             // Log summaryDataJson immediately for debugging
-            console.log("Setting taskData to:", summaryDataJson);
-            setTaskData(summaryDataJson || []);
+            console.log("Setting taskData to:", summaryDataJson && summaryDataJson.data);
+            setTaskData((summaryDataJson && summaryDataJson.data) || []);
           } else {
             console.error("Error fetching task summary:", summaryRes.status, summaryDataJson);
           }
@@ -140,184 +143,89 @@ function Dashboard() {
       <MDBox py={3}>
         {currentUser === "Admin" ? (
           <>
+            {/* Debug: Show raw taskData */}
+            <MDBox mb={2}>
+            </MDBox>
             {/* ProfileInfoCard for each taskData item */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
               {Array.isArray(taskData) &&
                 taskData.map((task, idx) => (
                   <Grid item xs={12} md={6} lg={4} key={idx}>
                     <ProfileInfoCard
-                      title={task.title || `Task ${idx + 1}`}
-                      description={task.description || "No description"}
+                      title={task.applicantName || `Task ${idx + 1}`}
+                      description={
+                        <span>
+                          Application #: {task.applicationNumber || "N/A"}
+                          {task.applicationNumber && (
+                            <Icon
+                              sx={{ cursor: "pointer", ml: 1, fontSize: 18, verticalAlign: "middle" }}
+                              title="Copy Application Number"
+                              onClick={() => {
+                                if (navigator && navigator.clipboard) {
+                                  navigator.clipboard.writeText(task.applicationNumber);
+                                }
+                              }}
+                            >
+                              content_copy
+                            </Icon>
+                          )}
+                        </span>
+                      }
                       info={{
-                        ...(task.fullName ? { fullName: task.fullName } : {}),
-                        ...(task.email ? { email: task.email } : {}),
-                        ...(task.status ? { status: task.status } : {}),
+                        ...(task.bsmName ? { BSM: task.bsmName } : {}),
+                        ...(task.submitterPhone ? { "Submitter's Phone": task.submitterPhone } : {}),
+                        ...(task.submitterEmail ? { Email: task.submitterEmail } : {}),
+                        ...(assignedTo[idx] ? { "Assigned To": assignedTo[idx] } : {}),
+                        ...(task.status ? { Status: task.status } : {}),
                       }}
-                      social={[
-                        {
-                          link: "#",
-                          icon: <Icon>facebook</Icon>,
-                          color: "facebook",
-                        },
-                        {
-                          link: "#",
-                          icon: <Icon>twitter</Icon>,
-                          color: "twitter",
-                        },
-                      ]}
                       action={{ route: "/profile", tooltip: "Edit Profile" }}
                       shadow
                     />
+                    <div style={{ marginTop: 8, marginBottom: 8 }}>
+                      <label htmlFor={`assign-to-${idx}`}>Assign to: </label>
+                      <select
+                        id={`assign-to-${idx}`}
+                        value={assignedTo[idx] || ""}
+                        onChange={async (e) => {
+                          const newAssignedTo = { ...assignedTo, [idx]: e.target.value };
+                          setAssignedTo(newAssignedTo);
+                          // Call update noidata route
+                          try {
+                            await fetch(`${API_BASE}/api/noidata/by-application-number/${task.applicationNumber}`, {
+                              method: "PUT",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                applicationNumber: task.applicationNumber,
+                                assignedTo: e.target.value,
+                              }),
+                            });
+                          } catch (err) {
+                            console.error("Failed to update noidata:", err);
+                          }
+                        }}
+                      >
+                        <option value="">Select admin</option>
+
+                        {adminData && adminData.length > 0 &&
+                          adminData.map((name, i) => (
+                            <option key={i} value={name}>
+                              {name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    <button
+                      style={{ marginTop: 8, marginBottom: 8 }}
+                      onClick={() => setExpandedCard(expandedCard === idx ? null : idx)}
+                    >
+                      {expandedCard === idx ? "Hide Admin Names" : "Show Admin Names"}
+                    </button>
+                    {/* Removed show admins name block */}
                   </Grid>
                 ))}
             </Grid>
-            {/* Showcase of all example cards */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-              <Grid item xs={12} md={6} lg={4}>
-                <SimpleBlogCard
-                  image="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
-                  title="Simple Blog Card"
-                  description="A short blog card description."
-                  action={{ type: "internal", route: "/", color: "info", label: "Read More" }}
-                />
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <DefaultInfoCard
-                  color="primary"
-                  icon="info"
-                  title="Info Card"
-                  description="Some info card description."
-                  value="123"
-                />
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <ProfileInfoCard
-                  title="Profile Info"
-                  description="User profile description."
-                  info={{ fullName: "John Doe", email: "john@example.com" }}
-                  social={[
-                    { link: "#", icon: <Icon>facebook</Icon>, color: "facebook" },
-                    { link: "#", icon: <Icon>twitter</Icon>, color: "twitter" },
-                  ]}
-                  action={{ route: "/profile", tooltip: "Edit Profile" }}
-                  shadow
-                />
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <DefaultProjectCard
-                  image="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80"
-                  label="Project"
-                  title="Project Card"
-                  description="A project card description."
-                  action={{
-                    type: "internal",
-                    route: "/project",
-                    color: "info",
-                    label: "View Project",
-                  }}
-                  authors={[
-                    { image: "https://randomuser.me/api/portraits/men/32.jpg", name: "Alice" },
-                    { image: "https://randomuser.me/api/portraits/men/33.jpg", name: "Bob" },
-                  ]}
-                />
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <ComplexStatisticsCard
-                  color="success"
-                  icon="leaderboard"
-                  title="Statistics Card"
-                  count={456}
-                  percentage={{ color: "success", amount: "+20%", label: "since last month" }}
-                />
-              </Grid>
-            </Grid>
-            {/* Admin summary card */}
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6} lg={3}>
-                <MDBox mb={1.5}>
-                  <ComplexStatisticsCard
-                    color="info"
-                    icon="person"
-                    title="Sample Card"
-                    count={42}
-                    percentage={{
-                      color: "success",
-                      amount: "+10%",
-                      label: "since last week",
-                    }}
-                  />
-                </MDBox>
-              </Grid>
-              {adminData.map((name, idx) => (
-                <Grid item xs={12} md={6} lg={3} key={idx}>
-                  <MDBox mb={1.5}>
-                    <ComplexStatisticsCard
-                      color="dark"
-                      icon="person"
-                      title={name}
-                      count={1}
-                      percentage={{
-                        color: "success",
-                        amount: "",
-                        label: "Admin User",
-                      }}
-                    />
-                  </MDBox>
-                </Grid>
-              ))}
-            </Grid>
-            {/* Charts and other widgets */}
-            <MDBox mt={4.5}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6} lg={4}>
-                  <MDBox mb={3}>
-                    <ReportsBarChart
-                      color="info"
-                      title="website views"
-                      description="Last Campaign Performance"
-                      date="campaign sent 2 days ago"
-                      chart={reportsBarChartData}
-                    />
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                  <MDBox mb={3}>
-                    <ReportsLineChart
-                      color="success"
-                      title="daily sales"
-                      description={
-                        <>
-                          (<strong>+15%</strong>) increase in today sales.
-                        </>
-                      }
-                      date="updated 4 min ago"
-                      chart={sales}
-                    />
-                  </MDBox>
-                </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                  <MDBox mb={3}>
-                    <ReportsLineChart
-                      color="dark"
-                      title="completed tasks"
-                      description="Last Campaign Performance"
-                      date="just updated"
-                      chart={tasks}
-                    />
-                  </MDBox>
-                </Grid>
-              </Grid>
-            </MDBox>
-            <MDBox>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6} lg={8}>
-                  <Projects />
-                </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                  <OrdersOverview />
-                </Grid>
-              </Grid>
-            </MDBox>
           </>
         ) : (
           <>
@@ -358,7 +266,6 @@ function Dashboard() {
           </>
         )}
       </MDBox>
-      <Footer />
     </DashboardLayout>
   );
 }
