@@ -14,6 +14,13 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 // react-router components
 import { useLocation, Link } from "react-router-dom";
@@ -54,7 +61,14 @@ import {
 } from "context";
 
 function DashboardNavbar({ absolute, light, isMini }) {
+  const [searchValue, setSearchValue] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
   const [navbarType, setNavbarType] = useState();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [fetchedData, setFetchedData] = useState(null);
+  const [editData, setEditData] = useState({});
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode } = controller;
   const [openMenu, setOpenMenu] = useState(false);
@@ -90,6 +104,50 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
+
+  // Search handler for application number
+  const handleSearch = async () => {
+    if (!searchValue.trim()) return;
+    try {
+      const API_BASE = "https://web-production-04c51.up.railway.app";
+      const res = await fetch(`${API_BASE}/api/noidata/by-application-number/${encodeURIComponent(searchValue.trim())}`);
+      if (!res.ok) throw new Error("Not found");
+      const result = await res.json();
+      let dataObj = result;
+      if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
+        dataObj = result.data[0];
+      } else if (result && result.success && typeof result.data === 'object') {
+        dataObj = result.data;
+      }
+      setFetchedData(dataObj);
+      setEditData(dataObj);
+      setDialogOpen(true);
+    } catch (err) {
+      setSnackbarMsg("No data found for: " + searchValue);
+      setSnackbarOpen(true);
+    }
+  };
+  const handleEditChange = (key, value) => {
+    setEditData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleEdit = () => setEditMode(true);
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    setEditData(fetchedData);
+  };
+  const handleSaveEdit = async () => {
+    // TODO: Implement save logic (API call)
+    setFetchedData(editData);
+    setEditMode(false);
+    setSnackbarMsg("Changes saved (not persisted)");
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbarOpen(false);
+  };
 
   // Render the notifications menu
   const renderMenu = () => (
@@ -135,8 +193,21 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </MDBox>
         {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
-              <MDInput label="Search here" />
+            <MDBox pr={1} display="flex" alignItems="center">
+              <MDInput
+                label="Search here"
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
+              />
+              <IconButton
+                size="small"
+                color="primary"
+                sx={{ ml: 1 }}
+                onClick={handleSearch}
+              >
+                <Icon>search</Icon>
+              </IconButton>
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in/basic">
@@ -181,6 +252,44 @@ function DashboardNavbar({ absolute, light, isMini }) {
           </MDBox>
         )}
       </Toolbar>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Application Data</DialogTitle>
+        <DialogContent>
+          {fetchedData && Object.keys(fetchedData).map((key) => (
+            <MDBox key={key} mb={2} display="flex" alignItems="center">
+              <MDInput
+                label={key}
+                value={editData[key] ?? ""}
+                onChange={e => handleEditChange(key, e.target.value)}
+                fullWidth
+                disabled={!editMode}
+                sx={{ mr: 2 }}
+              />
+            </MDBox>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          {!editMode ? (
+            <Button onClick={handleEdit} color="primary">Edit</Button>
+          ) : (
+            <>
+              <Button onClick={handleSaveEdit} color="primary">Save</Button>
+              <Button onClick={handleCancelEdit} color="secondary">Cancel</Button>
+            </>
+          )}
+          <Button onClick={() => setDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <MuiAlert onClose={handleSnackbarClose} severity="info" sx={{ width: "100%" }} elevation={6} variant="filled">
+          {snackbarMsg}
+        </MuiAlert>
+      </Snackbar>
     </AppBar>
   );
 }

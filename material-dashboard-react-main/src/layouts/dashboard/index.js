@@ -80,9 +80,13 @@ function Dashboard() {
             console.error("Error response (admin names):", adminRes.status, adminDataJson);
           }
           if (summaryRes.ok) {
-            // Log summaryDataJson immediately for debugging
-            console.log("Setting taskData to:", summaryDataJson && summaryDataJson.data);
-            setTaskData((summaryDataJson && summaryDataJson.data) || []);
+            // Ensure each document has an id field
+            let docs = (summaryDataJson && summaryDataJson.data) || [];
+            if (Array.isArray(docs)) {
+              docs = docs.map((doc) => ({ ...doc, id: doc.id || doc._id || doc.documentId || undefined }));
+            }
+            console.log("Setting taskData to:", docs);
+            setTaskData(docs);
           } else {
             console.error("Error fetching task summary:", summaryRes.status, summaryDataJson);
           }

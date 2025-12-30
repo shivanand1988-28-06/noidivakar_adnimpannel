@@ -1,60 +1,45 @@
+
 # Copilot Instructions for Material Dashboard 2 React
 
 ## Project Overview
-- **Material Dashboard 2 React** is a React + MUI (Material UI) admin dashboard template, structured for modularity and customization.
-- The project is organized around reusable components, example layouts, and a theme system. It is designed for rapid prototyping and production dashboards.
+- This is a React-based admin dashboard template using Material UI (MUI) v5, built and maintained by Creative Tim.
+- The codebase is modular, with reusable components in `src/components` and example implementations in `src/examples`.
+- The main entry point is `src/index.js`, which wraps the app in a context provider and React Router.
+- The core app logic and theming are in `src/App.js`.
+- Routing is defined in `src/routes.js` as a structured array, with each route specifying its type, icon, and component. Adding a route here automatically updates the Sidenav.
+- Layouts for major app sections are in `src/layouts` (e.g., dashboard, tables, authentication).
 
-## Key Architecture & Patterns
-- **Entry Point:** `src/App.js` sets up theming, layout switching (LTR/RTL, dark/light), and route rendering using React Router.
-- **Routing:** All routes are defined in `src/routes.js`. To add or modify pages, update this file. The Sidenav is auto-generated from this config.
-- **Layouts:** Main layouts are in `src/layouts/` (e.g., `dashboard`, `tables`, `billing`, etc.). Each layout is a page-level container.
-- **Components:** Reusable UI elements are in `src/components/MD*` and `src/examples/`. Use these for consistent design.
-- **Theme:** Theme files are in `src/assets/theme/` and `src/assets/theme-dark/`. Use these for color, typography, and style overrides.
-- **Context:** App-wide state (e.g., sidenav, theme) is managed via React Context in `src/context/`.
-- **Styling:** Use MUI's `styled()` API and `sx` prop for custom styles. Theme values are sourced from the theme files.
+## Key Patterns & Conventions
+- **Component Structure:** All custom UI elements are prefixed with `MD` (e.g., `MDBox`, `MDButton`) and live in `src/components`.
+- **Theme Management:** Themes are in `src/assets/theme` (default) and `src/assets/theme-dark` (dark mode). RTL support is provided via `theme-rtl.js` and `stylis-plugin-rtl`.
+- **Context:** App-wide state is managed via React Context in `src/context`.
+- **Example Usage:** `src/examples` contains higher-level UI patterns and example implementations for rapid prototyping.
+- **Assets:** Images and logos are in `src/assets/images`.
 
 ## Developer Workflows
-- **Install dependencies:** `npm install` or `yarn install`
-- **Start dev server:** `npm start` or `yarn start`
+- **Install dependencies:** `npm install` or `yarn install` (Node.js LTS required)
+- **Start dev server:** `npm start` or `yarn start` (runs with `react-scripts`)
 - **Build for production:** `npm run build` or `yarn build`
-- **Clean install:** `npm run install:clean`
-- **Linting/Formatting:** Uses ESLint and Prettier (`.eslintrc.json`, `.prettierrc.json`).
-- **Testing:** No custom tests included by default. Add tests as needed.
-- **Deploy:** Supports Genezio one-click deploy (see README for badge/link)
-
-## Project Conventions
-- **Component Naming:** All custom components use the `MD` prefix (e.g., `MDBox`, `MDButton`).
-- **File Organization:** Each component/example in its own folder with `index.js` as entry point.
-- **Theming:** Use the provided theme and `sx` prop for style overrides. Avoid inline styles. Edit `src/assets/theme/` for global style changes; use `theme-dark/` for dark mode.
-- **Routing:** Only update `src/routes.js` for navigation changes; the Sidenav and routing auto-update.
-- **API Integration:** Use `fetch` or your preferred client. Store tokens in `localStorage`.
-- **RTL Support:** RTL themes are in `src/assets/theme/theme-rtl.js` and `src/assets/theme-dark/theme-rtl.js`.
-
-## Data & API
-- Example API usage is in `src/layouts/dashboard/index.js` (see `API_BASE`). Auth tokens are read from `localStorage`.
-- For admin users, data is fetched from `/api/admin/all-names`; for others, from `/api/admin/assigned-tasks/:user`.
-- Update API endpoints and logic as needed for your backend.
+- **Clean install:** `npm run install:clean` (removes node_modules and lock file, reinstalls, and starts)
+- **Testing:** No custom test setup; uses `react-scripts test` if needed.
 
 ## Integration & Extensibility
-- **External Libraries:**
-  - MUI, React ChartJS 2, ChromaJS, Nepcha Analytics (see README for links)
-- **Analytics:** Nepcha Analytics is pre-integrated for traffic insights.
-- **Documentation:** Extensive docs at [Creative Tim](https://www.creative-tim.com/learning-lab/react/overview/material-dashboard/)
+- **Add new pages:** Create a new layout/component, then add a route in `src/routes.js`.
+- **Theming:** Use the MUI `ThemeProvider` and edit theme files for custom colors, typography, etc.
+- **External Libraries:** Uses MUI, Chart.js (via `react-chartjs-2`), Chroma.js, and Yup for validation.
+- **Analytics:** Nepcha Analytics is pre-integrated.
+
+## Project-Specific Notes
+- **File naming:** Use PascalCase for components, camelCase for variables/functions.
+- **Route structure:** Follow the comment block in `src/routes.js` for adding or customizing routes.
+- **RTL support:** To enable RTL, use the provided theme and plugin setup in `App.js`.
+- **Do not edit files in `build/`**—these are generated outputs.
 
 ## References
-- [README.md](../README.md) for general usage and links
-- [src/routes.js](../src/routes.js) for navigation structure
-- [src/layouts/](../src/layouts/) for page layouts
-- [src/components/](../src/components/) and [src/examples/](../src/examples/) for reusable UI
-- [src/assets/theme/](../src/assets/theme/) for theming
+- Main documentation: https://www.creative-tim.com/learning-lab/react/overview/material-dashboard/
+- Example pages: https://demos.creative-tim.com/material-dashboard-react/#/dashboard
+- For issues, see the GitHub repo: https://github.com/creativetimofficial/material-dashboard-react
 
 ---
 
----
-**Example: Adding a new dashboard widget**
-1. Create a new component in `src/components/` or `src/examples/`.
-2. Use `MDBox`, `MDTypography`, etc., for layout and text.
-3. Import and use your component in a layout (e.g., `src/layouts/dashboard/index.js`).
-4. Register any new routes in `src/routes.js` if needed.
-
-For more, see the [official documentation](https://www.creative-tim.com/learning-lab/react/overview/material-dashboard/?ref=readme-mdr) and follow the established folder/component patterns for consistency.
+*Update this file if you introduce new architectural patterns, workflows, or conventions unique to this project.*
