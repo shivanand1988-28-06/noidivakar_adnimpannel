@@ -157,7 +157,7 @@ function Dashboard() {
             <Grid container spacing={3} sx={{ mb: 4 }}>
               {Array.isArray(taskData) &&
                 taskData.map((task, idx) => (
-                  <Grid item xs={12} md={6} lg={4} key={idx}>
+                    <Grid item xs={12} md={6} lg={4} key={idx} sx={{ mb: { xs: 6, sm: 6, md: 8, lg: 10 } }}>
                     <ProfileInfoCard
                       title={task.applicantName || `Task ${idx + 1}`}
                       description={
