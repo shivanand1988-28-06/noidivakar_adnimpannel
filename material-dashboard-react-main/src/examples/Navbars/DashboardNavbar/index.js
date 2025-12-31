@@ -23,7 +23,7 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -62,6 +62,7 @@ import {
 } from "context";
 
 function DashboardNavbar({ absolute, light, isMini }) {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
@@ -217,7 +218,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 color="info"
                 size="small"
                 sx={{ minWidth: 64, fontWeight: 'bold', textTransform: 'uppercase' }}
-                onClick={() => { /* TODO: Add mias button action here */ }}
+                onClick={() => navigate("/mis")}
               >
                 MIS
               </MDButton>

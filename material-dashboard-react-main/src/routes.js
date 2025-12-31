@@ -44,11 +44,20 @@ import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import MIS from "layouts/mis";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 
 const routes = [
+  {
+    type: "collapse",
+    name: "MIS",
+    key: "mis",
+    icon: <Icon fontSize="small">analytics</Icon>,
+    route: "/mis",
+    component: <MIS />,
+  },
   {
     type: "collapse",
     name: "Dashboard",
