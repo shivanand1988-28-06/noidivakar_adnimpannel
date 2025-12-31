@@ -11,13 +11,51 @@ import ListItemText from "@mui/material/ListItemText";
 
 const API_BASE = "https://web-production-04c51.up.railway.app";
 const NOIDATA_FIELDS = [
-  { label: "Application Number", value: "applicationNumber" },
-  { label: "Applicant Name", value: "applicantName" },
-  { label: "Assigned To", value: "assignedTo" },
   { label: "Status", value: "status" },
-  { label: "BSM", value: "bsmName" },
-  { label: "Submitter's Phone", value: "submitterPhone" },
-  { label: "Submitter's Email", value: "submitterEmail" },
+  { label: "Aadhaar Number", value: "aadhaarNumber" },
+  { label: "PAN Name", value: "panName" },
+  { label: "PAN Number", value: "panNumber" },
+  { label: "File Name", value: "fileName" },
+  { label: "Upload Date", value: "uploadDate" },
+  { label: "Sanction Date", value: "sanctionDate" },
+  { label: "Applicant Name", value: "applicantName" },
+  { label: "Application Number", value: "applicationNumber" },
+  { label: "BSM Name", value: "bsmName" },
+  { label: "BSM Id", value: "bsmId" },
+  { label: "BSM Mobile Number", value: "bsmMobileNumber" },
+  { label: "Balance Transfer", value: "balanceTransfer" },
+  { label: "Terms Of Facility", value: "termsOfFacility" },
+  { label: "Facility Amount", value: "facilityAmount" },
+  { label: "EMI Amount", value: "emiAmount" },
+  { label: "Administrative Fees", value: "administrativeFees" },
+  { label: "CIBIL Fees", value: "cibilFees" },
+  { label: "CERSAI Fees", value: "cersaiFees" },
+  { label: "Mortgage Guarantee Fees", value: "mortgageGuaranteeFees" },
+  { label: "Fee Paid", value: "feePaid" },
+  { label: "Rate Of Interest", value: "rateOfInterest" },
+  { label: "Interest Rate Type", value: "interestRateType" },
+  { label: "Benchmark Rate", value: "benchmarkRate" },
+  { label: "Margin", value: "margin" },
+  { label: "Prepayment Charges", value: "prepaymentCharges" },
+  { label: "Special Conditions", value: "specialConditions" },
+  { label: "Raw QR Data", value: "rawQRData" },
+  { label: "Submitter Type", value: "submitterType" },
+  { label: "Submitter Id", value: "submitterId" },
+  { label: "Submitter Phone", value: "submitterPhone" },
+  { label: "Submitter Email", value: "submitterEmail" },
+  { label: "Extracted At", value: "extractedAt" },
+  { label: "Assigned To", value: "assignedTo" },
+  { label: "Current Address", value: "currentAddress" },
+  { label: "Aadhaar Name", value: "aadhaarName" },
+  { label: "Aadhaar Address", value: "aadhaarAddress" },
+  { label: "Borrower", value: "borrower" },
+  { label: "Co-Borrower", value: "coBorrower" },
+  { label: "Total Challan", value: "totalChallan" },
+  { label: "Mod Date", value: "modDate" },
+  { label: "Challan Names", value: "challanNames" },
+  { label: "Total Payable", value: "totalPayable" },
+  { label: "Created At", value: "createdAt" },
+  { label: "Updated At", value: "updatedAt" },
 ];
 
 function MIS() {
@@ -27,7 +65,7 @@ function MIS() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${API_BASE}/api/noidata/summary`)
+    fetch(`${API_BASE}/api/noidata`)
       .then((res) => res.json())
       .then((data) => {
         setTableData(Array.isArray(data.data) ? data.data : []);
