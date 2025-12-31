@@ -17,6 +17,7 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Tooltip from "@mui/material/Tooltip";
+import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
