@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -97,32 +98,34 @@ function MIS() {
   };
 
   return (
-    <MDBox py={3} px={2}>
-      <MDTypography variant="h4" fontWeight="bold" gutterBottom>
-        MIS Page
-      </MDTypography>
-      <FormControl sx={{ minWidth: 300, mb: 2 }}>
-        <InputLabel id="select-fields-label">Select Fields</InputLabel>
-        <Select
-          labelId="select-fields-label"
-          multiple
-          value={selectedFields}
-          onChange={handleFieldChange}
-          renderValue={(selected) => selected.map(f => NOIDATA_FIELDS.find(field => field.value === f).label).join(", ")}
-        >
-          {NOIDATA_FIELDS.map((field) => (
-            <MenuItem key={field.value} value={field.value}>
-              <Checkbox checked={selectedFields.indexOf(field.value) > -1} />
-              <ListItemText primary={field.label} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button variant="contained" color="primary" onClick={handleExport} disabled={!selectedFields.length || !tableData.length || loading}>
-        Export Selected Fields
-      </Button>
-      {loading && <MDTypography variant="body2" color="text">Loading data...</MDTypography>}
-    </MDBox>
+    <DashboardLayout>
+      <MDBox py={3} px={2}>
+        <MDTypography variant="h4" fontWeight="bold" gutterBottom>
+          MIS Page
+        </MDTypography>
+        <FormControl sx={{ minWidth: 300, mb: 2 }}>
+          <InputLabel id="select-fields-label">Select Fields</InputLabel>
+          <Select
+            labelId="select-fields-label"
+            multiple
+            value={selectedFields}
+            onChange={handleFieldChange}
+            renderValue={(selected) => selected.map(f => NOIDATA_FIELDS.find(field => field.value === f).label).join(", ")}
+          >
+            {NOIDATA_FIELDS.map((field) => (
+              <MenuItem key={field.value} value={field.value}>
+                <Checkbox checked={selectedFields.indexOf(field.value) > -1} />
+                <ListItemText primary={field.label} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Button variant="contained" color="primary" onClick={handleExport} disabled={!selectedFields.length || !tableData.length || loading}>
+          Export Selected Fields
+        </Button>
+        {loading && <MDTypography variant="body2" color="text">Loading data...</MDTypography>}
+      </MDBox>
+    </DashboardLayout>
   );
 }
 
