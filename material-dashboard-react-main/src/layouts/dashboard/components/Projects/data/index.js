@@ -70,11 +70,31 @@ export default function data() {
     </MDBox>
   );
 
+  function renderAssignedToCell(assignedArr) {
+    if (Array.isArray(assignedArr) && assignedArr.length > 0 && assignedArr[0]) {
+      return (
+        <MDBox display="flex" alignItems="center" justifyContent="center">
+          <MDTypography variant="caption" color="success" fontWeight="medium" display="flex" alignItems="center">
+            <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
+            {assignedArr[0]}
+          </MDTypography>
+        </MDBox>
+      );
+    }
+    return null;
+  }
+
   return {
     columns: [
       { Header: "companies", accessor: "companies", width: "30%", align: "left" },
       { Header: "members", accessor: "members", width: "10%", align: "left" },
-      { Header: "assigned to", accessor: "assignedTo", width: "20%", align: "center" },
+      {
+        Header: "assigned to",
+        accessor: "assignedTo",
+        width: "20%",
+        align: "center",
+        Cell: ({ value }) => renderAssignedToCell(value),
+      },
       { Header: "budget", accessor: "budget", align: "center" },
       { Header: "completion", accessor: "completion", align: "center" },
     ],
@@ -121,7 +141,7 @@ export default function data() {
             ])}
           </MDBox>
         ),
-        assignedTo: null, // Not assigned
+        assignedTo: [], // Not assigned
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $3,000
@@ -143,14 +163,7 @@ export default function data() {
             ])}
           </MDBox>
         ),
-        assignedTo: (
-          <MDBox display="flex" alignItems="center" justifyContent="center">
-            <MDTypography variant="caption" color="success" fontWeight="medium" display="flex" alignItems="center">
-              <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
-              Alexander Smith
-            </MDTypography>
-          </MDBox>
-        ),
+        assignedTo: ["Alexander Smith"],
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             Not set
@@ -174,7 +187,7 @@ export default function data() {
             ])}
           </MDBox>
         ),
-        assignedTo: null, // Not assigned
+        assignedTo: [], // Not assigned
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $20,500
@@ -193,7 +206,7 @@ export default function data() {
             {avatars([[team4, "Jessica Doe"]])}
           </MDBox>
         ),
-        assignedTo: null, // Not assigned
+        assignedTo: [], // Not assigned
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $500
@@ -215,14 +228,7 @@ export default function data() {
             ])}
           </MDBox>
         ),
-        assignedTo: (
-          <MDBox display="flex" alignItems="center" justifyContent="center">
-            <MDTypography variant="caption" color="success" fontWeight="medium" display="flex" alignItems="center">
-              <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
-              Jessica Doe
-            </MDTypography>
-          </MDBox>
-        ),
+        assignedTo: ["Jessica Doe"],
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $2,000

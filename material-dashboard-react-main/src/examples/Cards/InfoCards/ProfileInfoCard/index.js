@@ -44,6 +44,11 @@ function ProfileInfoCard({ title, description, info, action, shadow }) {
 
   // Convert this form `objectKey` of the object key in to this `object key`
   Object.keys(info).forEach((el) => {
+  // Debug: Log info and assignedTo value
+  if (info && Object.keys(info).includes("Assigned To")) {
+    // eslint-disable-next-line no-console
+    console.log("ProfileInfoCard assignedTo:", info["Assigned To"]);
+  }
     if (el.match(/[A-Z\s]+/)) {
       const uppercaseLetter = Array.from(el).find((i) => i.match(/[A-Z]+/));
       const newElement = el.replace(uppercaseLetter, ` ${uppercaseLetter.toLowerCase()}`);
@@ -72,48 +77,54 @@ function ProfileInfoCard({ title, description, info, action, shadow }) {
     setSnackbarOpen(false);
   };
 
-  const renderItems = labels.map((label, key) => (
-    <MDBox key={label} display="flex" alignItems="center" py={1} pr={2}>
-      <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
-        {label}: &nbsp;
-      </MDTypography>
-      <MDTypography variant="button" fontWeight="regular" color="text" display="flex" alignItems="center">
-        &nbsp;{values[key]}
-        {label.toLowerCase() === "status" && !!values[key] && (
-          <span
-            style={{
-              display: "inline-block",
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              marginLeft: 8,
-              backgroundColor:
-                values[key].toLowerCase() === "approved"
-                  ? "#4caf50"
-                  : values[key].toLowerCase() === "pending"
-                  ? "#ff9800"
-                  : values[key].toLowerCase() === "rejected"
-                  ? "#f44336"
-                  : "#9e9e9e",
-            }}
-          />
+  const renderItems = labels.map((label, key) => {
+    let displayValue = values[key];
+    if (label.toLowerCase().includes("assigned to") && Array.isArray(displayValue)) {
+      displayValue = displayValue[0] || "";
+    }
+    return (
+      <MDBox key={label} display="flex" alignItems="center" py={1} pr={2}>
+        <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
+          {label}: &nbsp;
+        </MDTypography>
+        <MDTypography variant="button" fontWeight="regular" color="text" display="flex" alignItems="center">
+          &nbsp;{displayValue}
+          {label.toLowerCase() === "status" && !!displayValue && (
+            <span
+              style={{
+                display: "inline-block",
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                marginLeft: 8,
+                backgroundColor:
+                  displayValue.toLowerCase() === "approved"
+                    ? "#4caf50"
+                    : displayValue.toLowerCase() === "pending"
+                    ? "#ff9800"
+                    : displayValue.toLowerCase() === "rejected"
+                    ? "#f44336"
+                    : "#9e9e9e",
+              }}
+            />
+          )}
+        </MDTypography>
+        {label.toLowerCase().includes("application") && typeof displayValue === "string" && (
+          <Tooltip title="Copy" placement="top">
+            <Icon
+              sx={{ cursor: "pointer", ml: 1, fontSize: 18 }}
+              onClick={() => handleCopy(displayValue)}
+            >
+              content_copy
+            </Icon>
+          </Tooltip>
         )}
-      </MDTypography>
-      {label.toLowerCase().includes("application") && typeof values[key] === "string" && (
-        <Tooltip title="Copy" placement="top">
-          <Icon
-            sx={{ cursor: "pointer", ml: 1, fontSize: 18 }}
-            onClick={() => handleCopy(values[key])}
-          >
-            content_copy
-          </Icon>
-        </Tooltip>
-      )}
-      {label.toLowerCase().includes("assigned to") && !!values[key] && (
-        <Icon sx={{ color: "success.main", ml: 1, fontSize: 18 }}>check_circle</Icon>
-      )}
-    </MDBox>
-  ));
+        {label.toLowerCase().includes("assigned to") && !!displayValue && (
+          <Icon sx={{ color: "success.main", ml: 1, fontSize: 18 }}>check_circle</Icon>
+        )}
+      </MDBox>
+    );
+  });
 
   // Social section removed
 
@@ -166,8 +177,8 @@ ProfileInfoCard.defaultProps = {
 // Typechecking props for the ProfileInfoCard
 ProfileInfoCard.propTypes = {
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  info: PropTypes.objectOf(PropTypes.string).isRequired,
+  description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+  info: PropTypes.object.isRequired,
   action: PropTypes.shape({
     route: PropTypes.string.isRequired,
     tooltip: PropTypes.string.isRequired,
