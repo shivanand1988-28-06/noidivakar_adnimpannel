@@ -209,6 +209,18 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <Icon>search</Icon>
               </IconButton>
             </MDBox>
+            {/* MIAS BUTTON - top right */}
+            <MDBox pr={2} display="flex" alignItems="center">
+              <MDButton
+                variant="contained"
+                color="info"
+                size="small"
+                sx={{ minWidth: 64, fontWeight: 'bold', textTransform: 'uppercase' }}
+                onClick={() => { /* TODO: Add mias button action here */ }}
+              >
+                MIS
+              </MDButton>
+            </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in/basic">
                 <IconButton sx={navbarIconButton} size="small" disableRipple>
