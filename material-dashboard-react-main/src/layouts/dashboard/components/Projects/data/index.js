@@ -71,15 +71,16 @@ export default function data() {
 
   return {
     columns: [
-      { Header: "companies", accessor: "companies", width: "45%", align: "left" },
+      { Header: "companies", accessor: "companies", width: "30%", align: "left" },
       { Header: "members", accessor: "members", width: "10%", align: "left" },
+      { Header: "assigned to", accessor: "assignedTo", width: "20%", align: "center" },
       { Header: "budget", accessor: "budget", align: "center" },
       { Header: "completion", accessor: "completion", align: "center" },
     ],
 
     rows: [
       {
-        companies: <Company image={logoXD} name="Material UI XD Version" />,
+        companies: <Company image={logoXD} name="Material UI XD Version" />, 
         members: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -88,6 +89,14 @@ export default function data() {
               [team3, "Alexander Smith"],
               [team4, "Jessica Doe"],
             ])}
+          </MDBox>
+        ),
+        assignedTo: (
+          <MDBox display="flex" alignItems="center" justifyContent="center">
+            <MDTypography variant="caption" color="success" fontWeight="medium" display="flex" alignItems="center">
+              <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
+              Romina Hadid
+            </MDTypography>
           </MDBox>
         ),
         budget: (
@@ -102,7 +111,7 @@ export default function data() {
         ),
       },
       {
-        companies: <Company image={logoAtlassian} name="Add Progress Track" />,
+        companies: <Company image={logoAtlassian} name="Add Progress Track" />, 
         members: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -111,6 +120,7 @@ export default function data() {
             ])}
           </MDBox>
         ),
+        assignedTo: null, // Not assigned
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $3,000
@@ -123,13 +133,21 @@ export default function data() {
         ),
       },
       {
-        companies: <Company image={logoSlack} name="Fix Platform Errors" />,
+        companies: <Company image={logoSlack} name="Fix Platform Errors" />, 
         members: (
           <MDBox display="flex" py={1}>
             {avatars([
               [team1, "Ryan Tompson"],
               [team3, "Alexander Smith"],
             ])}
+          </MDBox>
+        ),
+        assignedTo: (
+          <MDBox display="flex" alignItems="center" justifyContent="center">
+            <MDTypography variant="caption" color="success" fontWeight="medium" display="flex" alignItems="center">
+              <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
+              Alexander Smith
+            </MDTypography>
           </MDBox>
         ),
         budget: (
@@ -144,7 +162,7 @@ export default function data() {
         ),
       },
       {
-        companies: <Company image={logoSpotify} name="Launch our Mobile App" />,
+        companies: <Company image={logoSpotify} name="Launch our Mobile App" />, 
         members: (
           <MDBox display="flex" py={1}>
             {avatars([
@@ -155,6 +173,7 @@ export default function data() {
             ])}
           </MDBox>
         ),
+        assignedTo: null, // Not assigned
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $20,500
@@ -167,12 +186,13 @@ export default function data() {
         ),
       },
       {
-        companies: <Company image={logoJira} name="Add the New Pricing Page" />,
+        companies: <Company image={logoJira} name="Add the New Pricing Page" />, 
         members: (
           <MDBox display="flex" py={1}>
             {avatars([[team4, "Jessica Doe"]])}
           </MDBox>
         ),
+        assignedTo: null, // Not assigned
         budget: (
           <MDTypography variant="caption" color="text" fontWeight="medium">
             $500
@@ -185,13 +205,21 @@ export default function data() {
         ),
       },
       {
-        companies: <Company image={logoInvesion} name="Redesign New Online Shop" />,
+        companies: <Company image={logoInvesion} name="Redesign New Online Shop" />, 
         members: (
           <MDBox display="flex" py={1}>
             {avatars([
               [team1, "Ryan Tompson"],
               [team4, "Jessica Doe"],
             ])}
+          </MDBox>
+        ),
+        assignedTo: (
+          <MDBox display="flex" alignItems="center" justifyContent="center">
+            <MDTypography variant="caption" color="success" fontWeight="medium" display="flex" alignItems="center">
+              <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
+              Jessica Doe
+            </MDTypography>
           </MDBox>
         ),
         budget: (

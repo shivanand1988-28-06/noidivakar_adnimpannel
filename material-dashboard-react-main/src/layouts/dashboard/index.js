@@ -181,7 +181,14 @@ function Dashboard() {
                         ...(task.bsmName ? { BSM: task.bsmName } : {}),
                         ...(task.submitterPhone ? { "Submitter's Phone": task.submitterPhone } : {}),
                         ...(task.submitterEmail ? { Email: task.submitterEmail } : {}),
-                        ...(assignedTo[idx] ? { "Assigned To": assignedTo[idx] } : {}),
+                        ...(task.assignedTo ? {
+                          "Assigned To": (
+                            <span style={{ color: 'green', display: 'flex', alignItems: 'center' }}>
+                              <Icon sx={{ color: 'green', fontSize: 18, verticalAlign: 'middle', mr: 0.5 }}>check_circle</Icon>
+                              {task.assignedTo}
+                            </span>
+                          )
+                        } : {}),
                         ...(task.status ? { Status: task.status } : {}),
                       }}
                       action={{ route: "/profile", tooltip: "Edit Profile" }}
@@ -191,11 +198,9 @@ function Dashboard() {
                       <label htmlFor={`assign-to-${idx}`}>Assign to: </label>
                       <select
                         id={`assign-to-${idx}`}
-                        value={assignedTo[idx] || ""}
+                        value={task.assignedTo || ""}
                         onChange={async (e) => {
-                          const newAssignedTo = { ...assignedTo, [idx]: e.target.value };
-                          setAssignedTo(newAssignedTo);
-                          // Call update noidata route
+                          // Update assignedTo in backend and refresh taskData
                           try {
                             await fetch(`${API_BASE}/api/noidata/by-application-number/${task.applicationNumber}`, {
                               method: "PUT",
@@ -207,6 +212,14 @@ function Dashboard() {
                                 assignedTo: e.target.value,
                               }),
                             });
+                            // Refetch summary to update UI
+                            const summaryRes = await fetch(`${API_BASE}/api/noidata/summary`, { method: "GET" });
+                            const summaryDataJson = await summaryRes.json().catch(() => null);
+                            let docs = (summaryDataJson && summaryDataJson.data) || [];
+                            if (Array.isArray(docs)) {
+                              docs = docs.map((doc) => ({ ...doc, id: doc.id || doc._id || doc.documentId || undefined }));
+                            }
+                            setTaskData(docs);
                           } catch (err) {
                             console.error("Failed to update noidata:", err);
                           }
