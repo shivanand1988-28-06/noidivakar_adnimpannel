@@ -99,18 +99,31 @@ function Dashboard() {
         setCurrentUser(adminUser);
         console.log("Current User:", adminUser);
         try {
-          fetch(`${API_BASE}/api/admin/assigned-tasks/${encodeURIComponent(adminUser)}`, {
+          // Fetch assigned tasks as before
+          
+
+          // Fetch from /api/noidata where assignedTo = adminUser
+          fetch(`${API_BASE}/api/noidata?assignedTo=${encodeURIComponent(adminUser)}`, {
             method: "GET",
+            headers: { "Content-Type": "application/json" },
           })
             .then((res) => res.json())
             .then((data) => {
-              if (data.success) {
-                setAssignedTasks(data.assignedTask || []);
+              // Expecting an array of tasks/objects
+              if (Array.isArray(data)) {
+                // Extract only required fields
+                const filtered = data.map((item) => ({
+                  id: item.id || item._id || item.documentId,
+                  applicantName: item.applicantName,
+                  applicationNumber: item.applicationNumber,
+                  status: item.status,
+                }));
+                setAssignedTasks(filtered);
               } else {
-                console.error("Error:", data.message);
+                console.error("Unexpected /api/noidata response:", data);
               }
             })
-            .catch((err) => console.error("Request failed:", err));
+            .catch((err) => console.error("/api/noidata request failed:", err));
         } catch (error) {
           console.error("Error fetching assigned tasks:", error);
         }
