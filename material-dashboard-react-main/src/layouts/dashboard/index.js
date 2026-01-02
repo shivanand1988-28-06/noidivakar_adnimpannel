@@ -74,9 +74,24 @@ function Dashboard() {
       </MDTypography>
     ),
     applicationNumber: (
-      <MDTypography variant="caption" color="text" fontWeight="medium">
-        {task.applicationNumber}
-      </MDTypography>
+      <span style={{ display: "flex", alignItems: "center" }}>
+        <MDTypography variant="caption" color="text" fontWeight="medium">
+          {task.applicationNumber}
+        </MDTypography>
+        {task.applicationNumber && (
+          <Icon
+            sx={{ cursor: "pointer", ml: 1, fontSize: 18, verticalAlign: "middle" }}
+            title="Copy Application Number"
+            onClick={() => {
+              if (navigator && navigator.clipboard) {
+                navigator.clipboard.writeText(task.applicationNumber);
+              }
+            }}
+          >
+            content_copy
+          </Icon>
+        )}
+      </span>
     ),
     status: (
       <MDBox ml={-1}>
