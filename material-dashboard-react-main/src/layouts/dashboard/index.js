@@ -95,7 +95,12 @@ function Dashboard() {
     ),
     status: (
       <MDBox ml={-1}>
-        <MDBadge badgeContent={task.status || "-"} color={task.status === "online" ? "success" : "dark"} variant="gradient" size="sm" />
+        <MDBadge
+          badgeContent={task.status || "-"}
+          color={task.status === "completed" ? "info" : task.status === "online" ? "success" : "dark"}
+          variant="gradient"
+          size="sm"
+        />
       </MDBox>
     ),
     action: (
