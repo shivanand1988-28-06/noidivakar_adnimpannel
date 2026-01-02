@@ -22,6 +22,7 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 // Material Dashboard 2 React example components
@@ -31,7 +32,6 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
 import MDBadge from "components/MDBadge";
-import MDBox from "components/MDBox";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
@@ -41,45 +41,9 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 
 function Dashboard() {
-    // DataTable columns for assignedTasks
-    const assignedTasksColumns = [
-      { Header: "Applicant Name", accessor: "applicantName", width: "30%", align: "left" },
-      { Header: "Application Number", accessor: "applicationNumber", align: "left" },
-      { Header: "Status", accessor: "status", align: "center" },
-      { Header: "Action", accessor: "action", align: "center" },
-    ];
+  // Track expanded card and assigned admin per card
+  
 
-    // DataTable rows for assignedTasks
-    const assignedTasksRows = assignedTasks.map((task) => ({
-      applicantName: (
-        <MDTypography variant="button" fontWeight="medium">
-          {task.applicantName}
-        </MDTypography>
-      ),
-      applicationNumber: (
-        <MDTypography variant="caption" color="text" fontWeight="medium">
-          {task.applicationNumber}
-        </MDTypography>
-      ),
-      status: (
-        <MDBox ml={-1}>
-          <MDBadge badgeContent={task.status || "-"} color={task.status === "online" ? "success" : "dark"} variant="gradient" size="sm" />
-        </MDBox>
-      ),
-      action: (
-        <MDTypography
-          component="a"
-          href="#"
-          variant="caption"
-          color="text"
-          fontWeight="medium"
-          onClick={() => handleEditClick(task)}
-          style={{ cursor: "pointer" }}
-        >
-          Edit
-        </MDTypography>
-      ),
-    }));
   const isMobile = useMediaQuery("(max-width:600px)");
   // Track expanded card and assigned admin per card
   const [expandedCard, setExpandedCard] = React.useState(null);
@@ -93,6 +57,46 @@ function Dashboard() {
   const [taskData, setTaskData] = React.useState([]);
   const sales = [];
   const tasks = [];
+
+  // DataTable columns for assignedTasks
+  const assignedTasksColumns = [
+    { Header: "Applicant Name", accessor: "applicantName", width: "30%", align: "left" },
+    { Header: "Application Number", accessor: "applicationNumber", align: "left" },
+    { Header: "Status", accessor: "status", align: "center" },
+    { Header: "Action", accessor: "action", align: "center" },
+  ];
+
+  // DataTable rows for assignedTasks
+  const assignedTasksRows = assignedTasks.map((task) => ({
+    applicantName: (
+      <MDTypography variant="button" fontWeight="medium">
+        {task.applicantName}
+      </MDTypography>
+    ),
+    applicationNumber: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {task.applicationNumber}
+      </MDTypography>
+    ),
+    status: (
+      <MDBox ml={-1}>
+        <MDBadge badgeContent={task.status || "-"} color={task.status === "online" ? "success" : "dark"} variant="gradient" size="sm" />
+      </MDBox>
+    ),
+    action: (
+      <MDTypography
+        component="a"
+        href="#"
+        variant="caption"
+        color="text"
+        fontWeight="medium"
+        onClick={() => handleEditClick(task)}
+        style={{ cursor: "pointer" }}
+      >
+        Edit
+      </MDTypography>
+    ),
+  }));
 
   // Edit modal state and handlers (move outside useEffect)
   const [editModalOpen, setEditModalOpen] = React.useState(false);
