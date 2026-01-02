@@ -109,15 +109,17 @@ function Dashboard() {
           })
             .then((res) => res.json())
             .then((data) => {
-              // Expecting an array of tasks/objects
-              if (Array.isArray(data)) {
-                // Extract only required fields
-                const filtered = data.map((item) => ({
-                  id: item.id || item._id || item.documentId,
-                  applicantName: item.applicantName,
-                  applicationNumber: item.applicationNumber,
-                  status: item.status,
-                }));
+              // Handle API response: { success, count, data: [...] }
+              if (data && Array.isArray(data.data)) {
+                // Filter by assignedTo === adminUser (in case API does not filter)
+                const filtered = data.data
+                  .filter((item) => item.assignedTo === adminUser)
+                  .map((item) => ({
+                    id: item.id || item._id || item.documentId,
+                    applicantName: item.applicantName,
+                    applicationNumber: item.applicationNumber,
+                    status: item.status,
+                  }));
                 setAssignedTasks(filtered);
               } else {
                 console.error("Unexpected /api/noidata response:", data);
@@ -239,7 +241,7 @@ function Dashboard() {
                           }
                         }}
                       >
-                        <option value="">Select admin</option>
+                        <option value="">Select employee</option>
 
                         {adminData && adminData.length > 0 &&
                           adminData.map((name, i) => (
