@@ -100,21 +100,20 @@ function Dashboard() {
 
   // Edit modal state and handlers (move outside useEffect)
   const [editModalOpen, setEditModalOpen] = React.useState(false);
-  const [editForm, setEditForm] = React.useState({ id: "", applicantName: "", status: "" });
+  const [editForm, setEditForm] = React.useState({ id: "", applicantName: "", status: "initiated" });
 
   const handleEditClick = (task) => {
-    setEditForm({ id: task.id, applicantName: task.applicantName, status: task.status });
+    setEditForm({ id: task.id, applicantName: task.applicantName, status: task.status || "initiated" });
     setEditModalOpen(true);
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch(`${API_BASE}/api/noidata/by-application-number/${editForm.id}`, {
+      await fetch(`${API_BASE}/api/noidata/${editForm.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          applicantName: editForm.applicantName,
           status: editForm.status,
         }),
       });
@@ -404,15 +403,20 @@ function Dashboard() {
               {editModalOpen && (
                 <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <div style={{ background: "#fff", padding: 24, borderRadius: 8, minWidth: 320 }}>
-                    <h3>Edit Task</h3>
+                    <h3>Edit Task Status</h3>
                     <form onSubmit={handleEditSubmit}>
                       <div style={{ marginBottom: 12 }}>
                         <label>Status:</label>
-                        <input type="text" value={editForm.status} onChange={e => setEditForm({ ...editForm, status: e.target.value })} />
-                      </div>
-                      <div style={{ marginBottom: 12 }}>
-                        <label>Applicant Name:</label>
-                        <input type="text" value={editForm.applicantName} onChange={e => setEditForm({ ...editForm, applicantName: e.target.value })} />
+                        <select
+                          value={editForm.status}
+                          onChange={e => setEditForm({ ...editForm, status: e.target.value })}
+                          style={{ width: "100%", padding: 6 }}
+                        >
+                          <option value="initiated">initiated</option>
+                          <option value="in query(with government panel)">in query(with government panel)</option>
+                          <option value="in query(with customer)">in query(with customer)</option>
+                          <option value="completed">completed</option>
+                        </select>
                       </div>
                       <button type="submit">Save</button>
                       <button type="button" onClick={() => setEditModalOpen(false)} style={{ marginLeft: 8 }}>Cancel</button>
