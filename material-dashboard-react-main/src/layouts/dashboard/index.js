@@ -121,6 +121,7 @@ function Dashboard() {
                     status: item.status,
                   }));
                 setAssignedTasks(filtered);
+                console.log(assignedTasks)
               } else {
                 console.error("Unexpected /api/noidata response:", data);
               }
