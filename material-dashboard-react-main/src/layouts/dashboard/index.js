@@ -51,6 +51,52 @@ function Dashboard() {
   const sales = [];
   const tasks = [];
 
+  // Edit modal state and handlers (move outside useEffect)
+  const [editModalOpen, setEditModalOpen] = React.useState(false);
+  const [editForm, setEditForm] = React.useState({ id: "", applicantName: "", status: "" });
+
+  const handleEditClick = (task) => {
+    setEditForm({ id: task.id, applicantName: task.applicantName, status: task.status });
+    setEditModalOpen(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch(`${API_BASE}/api/noidata/by-application-number/${editForm.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicantName: editForm.applicantName,
+          status: editForm.status,
+        }),
+      });
+      // Refetch assigned tasks after update
+      fetch(`${API_BASE}/api/noidata?assignedTo=${encodeURIComponent(currentUser)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && Array.isArray(data.data)) {
+            const adminUserStr = String(currentUser).trim();
+            const filtered = data.data
+              .filter((item) => String(item.assignedTo).trim() === adminUserStr)
+              .map((item) => ({
+                id: item.id || item._id || item.documentId,
+                applicantName: item.applicantName,
+                applicationNumber: item.applicationNumber,
+                status: item.status,
+              }));
+            setAssignedTasks(filtered);
+          }
+        });
+      setEditModalOpen(false);
+    } catch (err) {
+      console.error("Failed to update document:", err);
+    }
+  };
+
   React.useEffect(() => {
     async function loggedAdminData() {
       const adminUser = (localStorage.getItem("user") || "").replace(/^"|"$/g, "").trim();
@@ -59,51 +105,6 @@ function Dashboard() {
         setLoading(false);
         setCurrentUser("");
         setUserNotFound(true);
-    // Edit modal state and handlers (move outside render)
-    const [editModalOpen, setEditModalOpen] = React.useState(false);
-    const [editForm, setEditForm] = React.useState({ id: "", applicantName: "", status: "" });
-
-    const handleEditClick = (task) => {
-      setEditForm({ id: task.id, applicantName: task.applicantName, status: task.status });
-      setEditModalOpen(true);
-    };
-
-    const handleEditSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await fetch(`${API_BASE}/api/noidata/by-application-number/${editForm.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            applicantName: editForm.applicantName,
-            status: editForm.status,
-          }),
-        });
-        // Refetch assigned tasks after update
-        fetch(`${API_BASE}/api/noidata?assignedTo=${encodeURIComponent(currentUser)}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data && Array.isArray(data.data)) {
-              const adminUserStr = String(currentUser).trim();
-              const filtered = data.data
-                .filter((item) => String(item.assignedTo).trim() === adminUserStr)
-                .map((item) => ({
-                  id: item.id || item._id || item.documentId,
-                  applicantName: item.applicantName,
-                  applicationNumber: item.applicationNumber,
-                  status: item.status,
-                }));
-              setAssignedTasks(filtered);
-            }
-          });
-        setEditModalOpen(false);
-      } catch (err) {
-        console.error("Failed to update document:", err);
-      }
-    };
         console.error("Admin user not found in localStorage.");
         return;
       }
