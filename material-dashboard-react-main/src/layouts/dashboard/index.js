@@ -59,6 +59,51 @@ function Dashboard() {
         setLoading(false);
         setCurrentUser("");
         setUserNotFound(true);
+    // Edit modal state and handlers (move outside render)
+    const [editModalOpen, setEditModalOpen] = React.useState(false);
+    const [editForm, setEditForm] = React.useState({ id: "", applicantName: "", status: "" });
+
+    const handleEditClick = (task) => {
+      setEditForm({ id: task.id, applicantName: task.applicantName, status: task.status });
+      setEditModalOpen(true);
+    };
+
+    const handleEditSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        await fetch(`${API_BASE}/api/noidata/by-application-number/${editForm.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            applicantName: editForm.applicantName,
+            status: editForm.status,
+          }),
+        });
+        // Refetch assigned tasks after update
+        fetch(`${API_BASE}/api/noidata?assignedTo=${encodeURIComponent(currentUser)}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data && Array.isArray(data.data)) {
+              const adminUserStr = String(currentUser).trim();
+              const filtered = data.data
+                .filter((item) => String(item.assignedTo).trim() === adminUserStr)
+                .map((item) => ({
+                  id: item.id || item._id || item.documentId,
+                  applicantName: item.applicantName,
+                  applicationNumber: item.applicationNumber,
+                  status: item.status,
+                }));
+              setAssignedTasks(filtered);
+            }
+          });
+        setEditModalOpen(false);
+      } catch (err) {
+        console.error("Failed to update document:", err);
+      }
+    };
         console.error("Admin user not found in localStorage.");
         return;
       }
@@ -267,39 +312,65 @@ function Dashboard() {
           </>
         ) : (
           <>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <MDBox mb={1.5}>
-                  <ComplexStatisticsCard
-                    color="info"
-                    icon="assignment"
-                    title="Assigned Tasks"
-                    count={assignedTasks.length}
-                    percentage={{
-                      color: "info",
-                      amount: "",
-                      label: "Your assigned tasks",
-                    }}
-                  />
-                </MDBox>
-              </Grid>
-            </Grid>
+            <MDBox mb={2}>
+              <ComplexStatisticsCard
+                color="info"
+                icon="assignment"
+                title="Assigned Tasks"
+                count={assignedTasks.length}
+                percentage={{
+                  color: "info",
+                  amount: "",
+                  label: "Your assigned tasks",
+                }}
+              />
+            </MDBox>
+            {/* Authors Table for assignedTasks */}
             <MDBox mt={4.5}>
-              <Grid container spacing={3}>
-                {assignedTasks.map((task, idx) => (
-                  <Grid item xs={12} md={6} lg={4} key={idx}>
-                    <MDBox mb={3}>
-                      <ReportsLineChart
-                        color="info"
-                        title={task.title || "Task"}
-                        description={task.description || "No description"}
-                        date={task.dueDate ? `Due: ${task.dueDate}` : "No due date"}
-                        chart={tasks}
-                      />
-                    </MDBox>
-                  </Grid>
-                ))}
-              </Grid>
+              <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff" }}>
+                <thead>
+                  <tr style={{ background: "#eee" }}>
+                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>ID</th>
+                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Applicant Name</th>
+                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Application Number</th>
+                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Status</th>
+                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Edit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {assignedTasks.map((task, idx) => (
+                    <tr key={idx}>
+                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.id}</td>
+                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.applicantName}</td>
+                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.applicationNumber}</td>
+                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.status}</td>
+                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                        <button onClick={() => handleEditClick(task)}>Edit</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {/* Edit Modal */}
+              {editModalOpen && (
+                <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ background: "#fff", padding: 24, borderRadius: 8, minWidth: 320 }}>
+                    <h3>Edit Task</h3>
+                    <form onSubmit={handleEditSubmit}>
+                      <div style={{ marginBottom: 12 }}>
+                        <label>Status:</label>
+                        <input type="text" value={editForm.status} onChange={e => setEditForm({ ...editForm, status: e.target.value })} />
+                      </div>
+                      <div style={{ marginBottom: 12 }}>
+                        <label>Applicant Name:</label>
+                        <input type="text" value={editForm.applicantName} onChange={e => setEditForm({ ...editForm, applicantName: e.target.value })} />
+                      </div>
+                      <button type="submit">Save</button>
+                      <button type="button" onClick={() => setEditModalOpen(false)} style={{ marginLeft: 8 }}>Cancel</button>
+                    </form>
+                  </div>
+                </div>
+              )}
             </MDBox>
           </>
         )}
