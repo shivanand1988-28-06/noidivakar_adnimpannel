@@ -28,6 +28,10 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import DataTable from "examples/Tables/DataTable";
+import MDTypography from "components/MDTypography";
+import MDBadge from "components/MDBadge";
+import MDBox from "components/MDBox";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
@@ -37,6 +41,45 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 
 function Dashboard() {
+    // DataTable columns for assignedTasks
+    const assignedTasksColumns = [
+      { Header: "Applicant Name", accessor: "applicantName", width: "30%", align: "left" },
+      { Header: "Application Number", accessor: "applicationNumber", align: "left" },
+      { Header: "Status", accessor: "status", align: "center" },
+      { Header: "Action", accessor: "action", align: "center" },
+    ];
+
+    // DataTable rows for assignedTasks
+    const assignedTasksRows = assignedTasks.map((task) => ({
+      applicantName: (
+        <MDTypography variant="button" fontWeight="medium">
+          {task.applicantName}
+        </MDTypography>
+      ),
+      applicationNumber: (
+        <MDTypography variant="caption" color="text" fontWeight="medium">
+          {task.applicationNumber}
+        </MDTypography>
+      ),
+      status: (
+        <MDBox ml={-1}>
+          <MDBadge badgeContent={task.status || "-"} color={task.status === "online" ? "success" : "dark"} variant="gradient" size="sm" />
+        </MDBox>
+      ),
+      action: (
+        <MDTypography
+          component="a"
+          href="#"
+          variant="caption"
+          color="text"
+          fontWeight="medium"
+          onClick={() => handleEditClick(task)}
+          style={{ cursor: "pointer" }}
+        >
+          Edit
+        </MDTypography>
+      ),
+    }));
   const isMobile = useMediaQuery("(max-width:600px)");
   // Track expanded card and assigned admin per card
   const [expandedCard, setExpandedCard] = React.useState(null);
@@ -328,30 +371,31 @@ function Dashboard() {
             </MDBox>
             {/* Authors Table for assignedTasks */}
             <MDBox mt={4.5}>
-              <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff" }}>
-                <thead>
-                  <tr style={{ background: "#eee" }}>
-                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>ID</th>
-                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Applicant Name</th>
-                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Application Number</th>
-                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Status</th>
-                    <th style={{ padding: "8px", border: "1px solid #ddd" }}>Edit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {assignedTasks.map((task, idx) => (
-                    <tr key={idx}>
-                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.id}</td>
-                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.applicantName}</td>
-                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.applicationNumber}</td>
-                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>{task.status}</td>
-                      <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                        <button onClick={() => handleEditClick(task)}>Edit</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  py={3}
+                  px={2}
+                  variant="gradient"
+                  bgColor="info"
+                  borderRadius="lg"
+                  coloredShadow="info"
+                >
+                  <MDTypography variant="h6" color="white">
+                    Assigned Tasks Table
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3}>
+                  <DataTable
+                    table={{ columns: assignedTasksColumns, rows: assignedTasksRows }}
+                    isSorted={false}
+                    entriesPerPage={false}
+                    showTotalEntries={false}
+                    noEndBorder
+                  />
+                </MDBox>
+              </Card>
               {/* Edit Modal */}
               {editModalOpen && (
                 <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
