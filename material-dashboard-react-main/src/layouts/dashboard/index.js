@@ -111,9 +111,11 @@ function Dashboard() {
             .then((data) => {
               // Handle API response: { success, count, data: [...] }
               if (data && Array.isArray(data.data)) {
+                console.log(data.data);
                 // Filter by assignedTo === adminUser (in case API does not filter)
+                const adminUserStr = String(adminUser).trim();
                 const filtered = data.data
-                  .filter((item) => item.assignedTo === adminUser)
+                  .filter((item) => String(item.assignedTo).trim() === adminUserStr)
                   .map((item) => ({
                     id: item.id || item._id || item.documentId,
                     applicantName: item.applicantName,
