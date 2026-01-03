@@ -111,6 +111,24 @@ function MIS() {
             value={selectedFields}
             onChange={handleFieldChange}
             renderValue={(selected) => selected.map(f => NOIDATA_FIELDS.find(field => field.value === f).label).join(", ")}
+            sx={{ width: 300 }}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  width: 300,
+                  maxHeight: 300,
+                },
+              },
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "left",
+              },
+              transformOrigin: {
+                vertical: "top",
+                horizontal: "left",
+              },
+              getContentAnchorEl: null,
+            }}
           >
             {NOIDATA_FIELDS.map((field) => (
               <MenuItem key={field.value} value={field.value}>
