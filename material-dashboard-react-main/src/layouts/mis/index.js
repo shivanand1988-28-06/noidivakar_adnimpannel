@@ -110,7 +110,15 @@ function MIS() {
             multiple
             value={selectedFields}
             onChange={handleFieldChange}
-            renderValue={(selected) => selected.map(f => NOIDATA_FIELDS.find(field => field.value === f).label).join(", ")}
+            renderValue={(selected) => (
+              <div style={{ display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap', width: 270 }}>
+                {selected.map(f => (
+                  <span key={f} style={{ marginRight: 8, background: '#e0e0e0', borderRadius: 4, padding: '2px 6px', fontSize: 13 }}>
+                    {NOIDATA_FIELDS.find(field => field.value === f).label}
+                  </span>
+                ))}
+              </div>
+            )}
             sx={{ width: 300 }}
             MenuProps={{
               PaperProps: {
