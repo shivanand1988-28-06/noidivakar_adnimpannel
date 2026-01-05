@@ -104,6 +104,22 @@ function MIS() {
           MIS Page
         </MDTypography>
         <FormControl sx={{ minWidth: 300, mb: 2 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{ mb: 1, mr: 1 }}
+            onClick={() => setSelectedFields(NOIDATA_FIELDS.map(f => f.value))}
+          >
+            Select All
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{ mb: 1 }}
+            onClick={() => setSelectedFields([])}
+          >
+            Deselect All
+          </Button>
           <InputLabel id="select-fields-label">Select Fields</InputLabel>
           <Select
             labelId="select-fields-label"
